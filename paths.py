@@ -112,7 +112,7 @@ def getDataDirPath(*args):
     except KeyError:
         raise IOError("No data directory found for {}{} in {}".format(*split))
 
-def dataDirs(sites):
+def dataDirs(sites, quiet= True):
     """
     Generator that returns paths to raw data directories corresponding to the given sites.
 
@@ -146,4 +146,4 @@ def dataDirs(sites):
             dataDir = _allDataDirs[(unit, site, year)]
             yield dataDir, unit, site, year
         except KeyError:
-            print( "No data available on the raw data drive for {}{} in {}, skipping".format(unit, site, year) )
+            if not quiet: print( "No data available on the raw data drive for {}{} in {}, skipping".format(unit, site, year) )
