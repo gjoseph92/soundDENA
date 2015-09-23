@@ -6,14 +6,15 @@ import glob
 import traceback
 
 class Accessor:
-    pathToData = None
+    def __init__(self, parserFunc, pathToData):
+        self.parse = parserFunc
+        if hasattr(pathToData, "__call__"):
+            self._filepath = pathToData
+        else:
+            self.pathToData = pathToData
+        self.__doc__ = self.parse.__doc__
 
-    @classmethod
-    def __init__(cls):
-        cls.__doc__ = cls.parse.__doc__
-
-    @classmethod
-    def __call__(cls, sites, quiet= True, **kwargs):
+    def __call__(self, sites, quiet= True, **kwargs):
         """
         Iterate site-by-site over a type of data.
 
@@ -27,7 +28,7 @@ class Accessor:
         """
         for dataDir, unit, site, year in paths.dataDirs(sites, quiet= quiet):
             try:
-                data = cls.access((dataDir, unit, site, year), **kwargs)
+                data = self.access((dataDir, unit, site, year), **kwargs)
                 yield data, unit, site, year
             except OSError as e:
                 if not quiet: print( e )
@@ -38,8 +39,7 @@ class Accessor:
                 if not quiet: print( traceback.format_exc() )
                 continue
 
-    @classmethod
-    def all(cls, sites, quiet= True, **kwargs):
+    def all(self, sites, quiet= True, **kwargs):
         """
         Read data from all specified sites.
 
@@ -48,7 +48,7 @@ class Accessor:
 
         Otherwise, return a dict of { siteID: data }
         """
-        results = { paths.siteID(unit, site, year): data for data, unit, site, year in cls.__call__(sites, quiet= quiet, **kwargs) }
+        results = { paths.siteID(unit, site, year): data for data, unit, site, year in self.__call__(sites, quiet= quiet, **kwargs) }
         try:
             joined = pd.concat(results)
             try:
@@ -61,8 +61,7 @@ class Accessor:
         except TypeError:
             return results
 
-    @classmethod
-    def paths(cls, sites):
+    def paths(self, sites):
         """
         Iterate site-by-site over the paths to this sort of data file.
 
@@ -70,12 +69,11 @@ class Accessor:
         """
         for dataDir, unit, site, year in paths.dataDirs(sites):
             try:
-                yield cls._filepath(dataDir, unit, site, year), unit, site, year
+                yield self._filepath(dataDir, unit, site, year), unit, site, year
             except OSError:
                 continue
 
-    @classmethod
-    def access(cls, site, **kwargs):
+    def access(self, site, **kwargs):
         """
         Read data from one site, specified by siteID, data directory, (unit, site, year), or (dataDir, unit, site, year)
         """
@@ -96,26 +94,25 @@ class Accessor:
         else:
             raise ValueError("Unknown site specification {}".format(site))
 
-        filePath = cls._filepath(dataDir, unit, site, year)
-        return cls.parse(filePath, **kwargs)
+        filePath = self._filepath(dataDir, unit, site, year)
+        return self.parse(filePath, **kwargs)
 
     @staticmethod
     def parse(filepath, **kwargs):
         raise NotImplementedError
     
-    @classmethod
-    def _filepath(cls, dataDir, unit, site, year):
+    def _filepath(self, dataDir, unit, site, year):
         """
         Return the path (or list of paths) to the data file(s) for the given site of this type,
-        by filling in `cls.pathToData`.
+        by filling in `self.pathToData`.
 
-        In the default implementation, cls.pathToData can be a pathlib.Path that looks like a
+        In the default implementation, self.pathToData can be a pathlib.Path that looks like a
         Python format string, i.e. `paths.spl / "SRCID_{unit}{site}.txt"`. It is formatted with keyword
         arguments for unit, site, and year, and joined onto the root data directory for the site. If
         the path contains a `*` character, it will be passed to `glob`, and the resulting list will
         be converted to pathlib.Paths and returned.
         """
-        specificPathToData = str(cls.pathToData).format(unit= unit, site= site, year= year)
+        specificPathToData = str(self.pathToData).format(unit= unit, site= site, year= year)
         pathForReader = dataDir / pathlib.Path(specificPathToData)
 
         strPath = str(pathForReader)
