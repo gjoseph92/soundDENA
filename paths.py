@@ -140,6 +140,7 @@ def dataDirs(sites, quiet= True):
         except ValueError:
             invalidIDs.append(siteID)
 
+    if not quiet and len(invalidIDs) > 0: print("Invalid site IDs given: {}".format(invalidIDs))
     ## Yield corresponding directories
     for unit, site, year in splitIDs:
         try:
