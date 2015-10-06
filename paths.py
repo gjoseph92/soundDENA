@@ -80,16 +80,27 @@ def dataDir(unit, site, year, title= ''):
 
 ## Make lookup dict of all data dirs immediately upon import
 _allDataDirs = {}
-try:
-    for dataDir in rawdata.iterdir():
-        try:
-            unit, site, year, title = splitDataDir(dataDir)
-            _allDataDirs[(unit, site, year)] = dataDir
-        except ValueError:
-            continue
-except FileNotFoundError:
-    import warnings
-    warnings.warn('Raw data directory "{}" not found (the drive may be disconnected.) Most data-accessing functions will raise exceptions.'.format(str(rawdata)))
+def _buildDataDirLookup(newRawData= None):
+    global rawdata
+    if newRawData is not None:
+        rawdata = pathlib.Path(newRawData)
+    try:
+        for dataDir in rawdata.iterdir():
+            try:
+                unit, site, year, title = splitDataDir(dataDir)
+                _allDataDirs[(unit, site, year)] = dataDir
+            except ValueError:
+                continue
+        if len(_allDataDirs) == 0:
+            import warnings
+            warnings.warn("No site data directories found in {}. Check if this is really the correct path to the raw data directory.".format(str(rawdata)))
+    except FileNotFoundError:
+        import warnings
+        warnings.warn('Raw data directory "{}" not found (the drive may be disconnected). Most data-accessing functions will raise exceptions.'.format(str(rawdata)))
+    except PermissionError:
+        import warnings
+        warnings.warn('Permission denied to access data directory "{}". Most data-accessing functions will raise exceptions.'.format(str(rawdata)))
+_buildDataDirLookup()
 
 def getDataDirPath(*args):
     """
