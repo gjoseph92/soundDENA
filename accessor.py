@@ -11,11 +11,15 @@ class Accessor:
         Instantiate an Accessor for a specific filetype by giving a function
         to parse that kind of file, and where that file is located.
 
-        :param function parserFunc: A function which, given the path(s) to a file,
-                                    parses and returns the data. This overrides the
-                                    :meth:`parse` method of the instance.
-        :param pathToData: Where to find the filetype in a site's :ref:`data directory <dataDir>`
-        :type pathToData: str, pathlib.Path, or function
+        Parameters
+        ----------
+        parserFunc : function
+            A function which, given the path(s) to a file,
+            parses and returns the data. This overrides the
+            :meth:`parse` method of the instance.
+        pathToData : str, pathlib.Path, or function
+            Where to find the filetype in a site's :ref:`data directory <dataDir>`
+
 
         The docstring of ``parserFunc`` also will become the docstring of the Accessor instance.
 
@@ -33,7 +37,7 @@ class Accessor:
             * ``soundDB.paths.nvspl / "NVSPL_{unit}{site}*.txt"``
 
         If **pathToData** is a function, it should take the details of a specific site
-        and return the path to the file within that site, with this signature:
+        and return the path to the file(s) within that site, with this signature:
 
         .. function:: pathToData(dataDir, unit, site, year)
 
@@ -43,7 +47,7 @@ class Accessor:
             :param str year: Year of the site
 
             :return: Varies; the result is passed directly to ``parserFunc``.
-                     Often, pathlib.Path or list of pathlib.Path to the file(s)
+                     Often, a pathlib.Path or list of pathlib.Path to the file(s)
                      to be parsed within the specific site's data directory.
         """
         self.parse = parserFunc
@@ -57,12 +61,22 @@ class Accessor:
         """
         Iterate site-by-site over a type of data.
 
-        :param iterable sites: :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
-        :param boolean quiet: Whether to not print info about any errors that occur. Default is True
-        :param kwargs: Any keyword arguments specific to this filetype's :meth:`parse` function
+        Parameters
+        ----------
+        sites : iterable
+            :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+        quiet : boolean, optional
+            Whether to not print info about any errors that occur
+        kwargs
+            Any keyword arguments specific to this filetype's :meth:`parse` function
 
-        :return: Iterator that yields a 4-tuple of
-                 (data for each site of whatever kind of data you asked for, unit, site, year)
+        Yields
+        ------
+        data : varies
+            Data from each site in the format returned by :meth:`parse`
+        unit : str
+        site : str
+        year : str
         """
         for dataDir, unit, site, year in paths.dataDirs(sites, quiet= quiet):
             try:
@@ -81,13 +95,21 @@ class Accessor:
         """
         Read data from all specified sites into a single DataFrame or dict.
 
-        :param iterable sites: :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
-        :param boolean quiet: Whether to not print info about any errors that occur. Default is True
-        :param kwargs: Any keyword arguments specific to this filetype's :meth:`parse` function
+        Parameters
+        ----------
+        sites : iterable
+            :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+        quiet : boolean, optional
+            Whether to not print info about any errors that occur
+        kwargs
+            Any keyword arguments specific to this filetype's :meth:`parse` function
 
-        :return: If :meth:`parse` retuns a pandas NDFrame for each site, all sites will be
-                 concatenated into one NDFrame, with :ref:`siteID` as outermost level of hierarchical index.
-                 Otherwise, returns a dict of ``{ siteID: data }``
+        Returns
+        -------
+        NDFrame or dict
+            If :meth:`parse` retuns a pandas NDFrame for each site, all sites will be
+            concatenated into one NDFrame, with :ref:`siteID` as outermost level of hierarchical index.
+            Otherwise, returns a dict of ``{ siteID: data }``
         """
 
         results = { paths.siteID(unit, site, year): data for data, unit, site, year in self.__call__(sites, quiet= quiet, **kwargs) }
@@ -107,10 +129,18 @@ class Accessor:
         """
         Iterate site-by-site over the paths to this sort of data file.
 
-        :param iterable sites: :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+        Parameters
+        ----------
+        sites : iterable of str, or NDFrame
+            :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
 
-        :return: An iterator that yields a 4-tuple of
-                 (pathlib.Path [or possibly a list of pathlib.Path], unit, site, year)
+        Yields
+        ------
+        path : (list of) pathlib.Path
+            Path(s) to the data file(s) for the site
+        unit : str
+        site : str
+        year : str
         """
         for dataDir, unit, site, year in paths.dataDirs(sites):
             try:
@@ -122,16 +152,22 @@ class Accessor:
         """
         Read data from one site.
 
-        :param site: A single site or data directory specifier:
+        Parameters
+        ----------
+        site
+            A single site or data directory specifier:
 
-                    * :ref:`siteID` string
-                    * pathlib.Path to a :ref:`data directory <dataDir>`
-                    * tuple of (unit, site, year) (all strings)
-                    * tuple of (dataDir, unit, site, year) (all strings, dataDir as pathlib.Path)
+                * :ref:`siteID` string
+                * pathlib.Path to a :ref:`data directory <dataDir>`
+                * tuple of (unit, site, year) (all strings)
+                * tuple of (dataDir, unit, site, year) (all strings, dataDir as pathlib.Path)
+        kwargs
+            Any keyword arguments specific to this filetype's :meth:`parse` function
 
-        :param kwargs: Any keyword arguments specific to this filetype's :meth:`parse` function
-
-        :return: The result of the instance's :meth:`parse` function (typically a pandas DataFrame or Panel)
+        Returns
+        -------
+        varies
+            The result of the instance's :meth:`parse` function (typically a pandas DataFrame or Panel)
         """
         if isinstance(site, tuple) or isinstance(site, list):
             if len(site) == 4:
@@ -162,12 +198,17 @@ class Accessor:
 
         All parse functions should have this signature:
 
-        :param filepath: The path(s) from which to read data
-        :type filepath: pathlib.Path, or iterable of pathlib.Path
-        :param kwargs: Any keyword arguments specific to reading this filetype
+        Parameters
+        ----------
+        filepath : pathlib.Path, or iterable of pathlib.Path
+            The path(s) from which to read data
+        kwargs
+            Any keyword arguments specific to reading this filetype
 
-        :return: Varies depending on what type of data is read.
-                 Typically, a pandas NDFrame.
+        Returns
+        -------
+        varies
+            Depends on what type of data is read. Typically, a pandas NDFrame.
         """
         raise NotImplementedError
     

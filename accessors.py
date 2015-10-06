@@ -17,12 +17,24 @@ def nvspl(dirpath, interval= 1, onlyColumns= None, quiet= True):
     To speed up the process during testing, set the interval: only every ith file will be read.
     You can also specify only the columns you need, reducing import time and memory footprint.
 
-    dirpath : string or pathlib.Path
+    Parameters
+    ----------
+    dirpath : str or pathlib.Path
         every file in this directory will be read in as an NVSPL
-    interval : int, optional
-        only every i files in the directory will be imported
-    onlyColumns : sequence of column names (str) or indicies (int), optional
-        only these columns will be imported
+
+    Keyword Args
+    ------------
+    interval : int, optional, default 1
+        Only every i files in the directory will be imported
+    onlyColumns : sequence of column names (str) or indicies (int), optional, default None
+        Only these columns will be imported. Use None to read all columns
+    quiet : boolean, optional, default True
+        Whether to not print progress reading files
+
+    Returns
+    -------
+    DataFrame
+        Indexed by date, with frequency column names as decimals instead of "12p5h"
     """
     if type(dirpath) is str:
         dirpath = pathlib.Path(dirpath)
@@ -78,8 +90,16 @@ def srcid(path):
     """
     Read a SPLAT SRCID file into a pandas DataFrame.
 
-    The `nvsplDate`, `hr`, and `secs` columns are combined into a single DatetimeIndex for the DataFrame and dropped.
-    The `len` column (length of the noise event) is converted to a pandas Timedelta.
+    The ``nvsplDate``, ``hr``, and ``secs`` columns are combined into a single DatetimeIndex for the DataFrame and dropped.
+    The ``len`` column (length of the noise event) is converted to a pandas Timedelta.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+
+    Returns
+    -------
+    DataFrame
     """
     if type(path) is str:
         path = pathlib.Path(path)
@@ -135,12 +155,20 @@ def srcid(path):
 
 def loudEvents(path):
     """
-    audibility    Read a LOUNDEVENTS file into a pandas Panel.
+    Read a LOUNDEVENTS file into a pandas Panel.
 
-    - The items axis (axis 0) is ["above", "all", "percent"]. So you'd use `events["above"]` to get a
+    * The items axis (axis 0) is ["above", "all", "percent"]. So you'd use ``events["above"]`` to get a
       sub-DataFrame of events that exceeded L_nat, where rows are indexed by date, and columns from 0 to 23 hours.
-    - The major_axis (axis 1) is `date`: pandas DateTime objects
-    - The minor_axis (axis 2) is `hour`: 0 to 23
+    * The major_axis (axis 1) is ``date``: pandas DateTime objects
+    * The minor_axis (axis 2) is ``hour``: 0 to 23
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+
+    Returns
+    -------
+    Panel
     """
 
     data = pd.read_csv(str(path) if isinstance(path, pathlib.Path) else path,
@@ -225,24 +253,30 @@ def dailyPA(path):
     Read a DAILYPA (percent time audible) file into a MultiIndexed pandas DataFrame.
 
     The result will be indexed on two levels: `date` and `srcid`.
-    This allows for interesting sub-indexing, such as:
+    This allows for interesting sub-indexing, such as::
 
-    ```
-    >> data.loc["2013-06-29", :]
-    -> just srcid rows for 6/29/13, and all columns
+        >> data.loc["2013-06-29", :]
+        -> just srcid rows for 6/29/13, and all columns
 
-    >> data.loc[(slice(None), "Total_All"), :]
-    -> all dates, but just "Total_All" srcid rows, and all columns
+        >> data.loc[(slice(None), "Total_All"), :]
+        -> all dates, but just "Total_All" srcid rows, and all columns
 
-    >> df.loc[(slice(None), "Total_All"), "00-23h"]
-    -> all dates, just "Total_All" srcid rows, and only the 00-23h column.
-       (Basically, a Series of total percent time audible per day.)
+        >> df.loc[(slice(None), "Total_All"), "00-23h"]
+        -> all dates, just "Total_All" srcid rows, and only the 00-23h column.
+           (Basically, a Series of total percent time audible per day.)
 
-    >> df.loc[(slice(None), slice("1.1", "1.3")), "00h":"23h"]
-    -> all dates, but just srcid rows between 1.1 and 1.3, and only columns from 00h to 23h.
-    ```
+        >> df.loc[(slice(None), slice("1.1", "1.3")), "00h":"23h"]
+        -> all dates, but just srcid rows between 1.1 and 1.3, and only columns from 00h to 23h.
 
-    For more, read the [pandas docs for heirarchical indexing](http://pandas-docs.pydata.org/pandas-docs/stable/advanced.html#advanced-indexing-with-hierarchical-index).
+    For more, read the `pandas docs for heirarchical indexing <http://pandas-docs.pydata.org/pandas-docs/stable/advanced.html#advanced-indexing-with-hierarchical-index`_.
+    
+    Parameters
+    ----------
+    path : str or pathlib.Path
+
+    Returns
+    -------
+    DataFrame
     """
     
     data = pd.read_csv(str(path),
@@ -355,89 +389,86 @@ class metricsReader:
         Read all tables from a metrics file.
 
         Returns an object (a named tuple, really) with attributes for each metric in the file, as well as
-        `metadata`, which is a dict of the colon-seperated key-value pairs in the file's header.
-        Missing metrics are stored as None. (SPLAT-related metrics such as `noiseFreeInterval` are often missing.)
+        ``metadata``, which is a dict of the colon-seperated key-value pairs in the file's header.
+        Missing metrics are stored as None. (SPLAT-related metrics such as ``noiseFreeInterval`` are often missing.)
 
-        Otherwise, each attribute for a table has two attributes itself: `data` and `n`. `data` contains a
-        pandas Panel of that table's data. `n` contains a DataFrame or Series of TimeDeltas of the
+        Otherwise, each attribute for a table has two attributes itself: ``data`` and ``n``. ``data`` contains a
+        pandas Panel of that table's data. ``n`` contains a DataFrame or Series of TimeDeltas of the
         lengths of the dataset, by season and table type.
 
-        So the object returned is structured like:
+        So the object returned is structured like::
 
-        ```
-        metrics
-            metadata: {"Day": "07:00:00 to 18:59:59", "Source of Interest": "Aircraft", ...}
-            hourlyMedian
-                data: Panel
-                n: DataFrame
-            frequency
-                data: Panel
-                n: DataFrame
-            ambient
-                data: Panel
-                n: DataFrame
-            ...
-            ...
-        ```
+            metrics
+                metadata: {"Day": "07:00:00 to 18:59:59", "Source of Interest": "Aircraft", ...}
+                hourlyMedian
+                    data: Panel
+                    n: DataFrame
+                frequency
+                    data: Panel
+                    n: DataFrame
+                ambient
+                    data: Panel
+                    n: DataFrame
+                ...
+                ...
+            
 
         A primary purpose of this reader is to combine multiple tables of related data in the metrics file
         into single structures. (For example, Median Hourly Metrics could have four tables, for dBA and dBT
         in both Summer and Winter. These are combined into a single Panel, making it easy to perform complex
         selections across the tables---e.g. dBA in both seasons.)
 
-        Here's how these `data` Panels are indexed:
+        Here's how these ``data`` Panels are indexed:
 
             + For metrics composed of multiple tables:
                 - Labels axis: Season        ("Winter", "Summer", ...)
                 - Items axis:  Table type    ("dBA" and "dBT"; "night" and "day"; "l90", "lnat", and "l50"; ...)
                 - Major axis:  Table columns ("12.5Hz" to "20000Hz"; 0 to 23; "Lmin", "L099", "Lnat", ...)
                 - Minor axis:  Table rows    ("L090", "Lnat", "L050"; "Day", "Night", "overall"; 0 to 23; 1.1, 1.2, 1.3, ...)
-                - **So these are accessed `data.loc[ <season>, <tableType>, <columns>, <rows> ]`**
+                - **So these are accessed ``data.loc[ <season>, <tableType>, <columns>, <rows> ]``**
             + For metrics composed of just one table:
                 - Items axis: Season        ("Winter", "Summer", ...)
                 - Major axis: Table columns ("12.5Hz" to "20000Hz"; 0 to 23; "Lmin", "L099", "Lnat", ...)
                 - Minor axis: Table rows    ("L090", "Lnat", "L050"; "Day", "Night", "overall"; 0 to 23; 1.1, 1.2, 1.3, ...)
-                - **So these are accessed `data.loc[ <season>, <columns>, <rows> ]`**
+                - **So these are accessed ``data.loc[ <season>, <columns>, <rows> ]``**
 
-        And the `n` DataFrames or Series are indexed:
+        And the ``n`` DataFrames or Series are indexed:
 
             + For metrics composed of multiple tables (DataFrame):
                 - Columns: Season     ("Winter", "Summer", ...)
                 - Rows:    Table type ("dBA" and "dBT"; "night" and "day"; "l90", "lnat", and "l50"; ...)
-                - **So these are accessed `n.loc[ <season>, <tableType> ]`**
+                - **So these are accessed ``n.loc[ <season>, <tableType> ]``**
             + For metrics composed of just one table (Series):
                 - Rows: Season     ("Winter", "Summer", ...)
-                - **So these are accessed `n[ <season> ]`**
+                - **So these are accessed ``n[ <season> ]``**
 
-        Examples (where the object returned from this function is stored as `metrics`):
+        Examples (where the object returned from this function is stored as ``metrics``)::
 
-        ```
-        >> metrics.noiseFreeInterval.data
-        -> a Panel of the SPLAT Noise Free Interval (sec) table for each season, indexed by [season, percentile, hour]
+            >> metrics.noiseFreeInterval.data
+            -> a Panel of the SPLAT Noise Free Interval (sec) table for each season, indexed by [season, percentile, hour]
 
-        >> metrics.noiseFreeInterval.n
-        -> a Series of the number of days used to compute the noise free interval metric, with one row per season
+            >> metrics.noiseFreeInterval.n
+            -> a Series of the number of days used to compute the noise free interval metric, with one row per season
 
-        >> metrics.hourlyMedian.data
-        -> a Panel4D of the Median Hourly Metrics tables for dBA and dBT for each season, indexed by [season, spl weighting, percentile, hour]
+            >> metrics.hourlyMedian.data
+            -> a Panel4D of the Median Hourly Metrics tables for dBA and dBT for each season, indexed by [season, spl weighting, percentile, hour]
 
-        >> metrics.hourlyMedian.data.Summer.dBA
-        >> metrics.hourlyMedian.data.loc["Summer", "dBA"]
-        -> a DataFrame subselecting the dBA item from the Summer label in the Median Hourly Metrics panel
-        -> (essentially, just the original `Median Hourly Metrics (dBA), Summer` table in the metrics file)
+            >> metrics.hourlyMedian.data.Summer.dBA
+            >> metrics.hourlyMedian.data.loc["Summer", "dBA"]
+            -> a DataFrame subselecting the dBA item from the Summer label in the Median Hourly Metrics panel
+            -> (essentially, just the original ``Median Hourly Metrics (dBA), Summer`` table in the metrics file)
 
-        >> metrics.hourlyMedian.data.loc["Winter", :, "Leq", 0:12]
-        -> a DataFrame of median Leq values from the hours 0-12 (rows) for both dBA and dBT (columns) in Winter
+            >> metrics.hourlyMedian.data.loc["Winter", :, "Leq", 0:12]
+            -> a DataFrame of median Leq values from the hours 0-12 (rows) for both dBA and dBT (columns) in Winter
 
-        >> metrics.hourlyMedian.data.loc[:, :, "Leq", 0:12].mean(axis= "items")
-        -> a DataFrame of the mean across all seasons of median Leq values from the hours 0-12 (columns) for both dBA and dBT (rows)
-        ```
+            >> metrics.hourlyMedian.data.loc[:, :, "Leq", 0:12].mean(axis= "items")
+            -> a DataFrame of the mean across all seasons of median Leq values from the hours 0-12 (columns) for both dBA and dBT (rows)
 
         Special Cases:
 
-            + Hour axes have the `'h'` removed, so they are just integers 0-23.
-            + The `frequency`, `ambient`, and `percentTimeAbove` metrics have the additional row `"overall"`
-              added along with `"Day"` and `"Night"`. This is the logarithmic mean SPL for both day and night.
+            + Hour axes have the ``'h'`` removed, so they are just integers 0-23.
+            + The ``frequency``, ``ambient``, and ``percentTimeAbove`` metrics have the additional row ``"overall"``
+              added along with ``"Day"`` and ``"Night"``. This is the logarithmic mean SPL for both day and night.
 
         A TypeError is raised if the version of the file does not match the reader.
         A ValueError is raised if the header cannot be parsed, or exactly the wrong number of tables are found in the file.
