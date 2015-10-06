@@ -222,7 +222,7 @@ def audibility(dirpath):
 
 def dailyPA(path):
     """
-    metrics    Read a DAILYPA (percent time audible) file into a MultiIndexed pandas DataFrame.
+    Read a DAILYPA (percent time audible) file into a MultiIndexed pandas DataFrame.
 
     The result will be indexed on two levels: `date` and `srcid`.
     This allows for interesting sub-indexing, such as:

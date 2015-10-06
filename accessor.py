@@ -7,6 +7,45 @@ import traceback
 
 class Accessor:
     def __init__(self, parserFunc, pathToData):
+        """
+        Instantiate an Accessor for a specific filetype by giving a function
+        to parse that kind of file, and where that file is located.
+
+        :param function parserFunc: A function which, given the path(s) to a file,
+                                    parses and returns the data. This overrides the
+                                    :meth:`parse` method of the instance.
+        :param pathToData: Where to find the filetype in a site's :ref:`data directory <dataDir>`
+        :type pathToData: str, pathlib.Path, or function
+
+        The docstring of ``parserFunc`` also will become the docstring of the Accessor instance.
+
+        If **pathToData** is a string or pathlib.Path, it should be the path to this
+        filetype *relative* to a :ref:`data directory <dataDir>`. The path can look like a
+        Python format string that takes the keyword arguments ``unit``, ``site``, and ``year``.
+        If the path contains a ``*`` character, it will also be passed to ``glob``,
+        and the resulting list will be converted to pathlib.Paths and returned.
+        (In this case, the ``parserFunc`` should also expect a list of paths.)
+
+        Examples for ``pathToData``:
+
+            * ``"01 DATA/PHOTOS/CardinalPhotoComposite_{unit}{site}.jpg"``
+            * ``soundDB.paths.spl / "SRCID_{unit}{site}.txt"``
+            * ``soundDB.paths.nvspl / "NVSPL_{unit}{site}*.txt"``
+
+        If **pathToData** is a function, it should take the details of a specific site
+        and return the path to the file within that site, with this signature:
+
+        .. function:: pathToData(dataDir, unit, site, year)
+
+            :param pathlib.Path dataDir: The root data directory for a site
+            :param str unit: Unit of the site
+            :param str site: Site code of the site
+            :param str year: Year of the site
+
+            :return: Varies; the result is passed directly to ``parserFunc``.
+                     Often, pathlib.Path or list of pathlib.Path to the file(s)
+                     to be parsed within the specific site's data directory.
+        """
         self.parse = parserFunc
         if hasattr(pathToData, "__call__"):
             self._filepath = pathToData
@@ -18,13 +57,12 @@ class Accessor:
         """
         Iterate site-by-site over a type of data.
 
-        Takes: an iterable of sites (typically a DataFrame indexed by site ID)
-        Yields: tuple of
-                0 - data for each site of whatever kind of data you asked for,
-                    as read by the appropriate Reader
-                1 - unit
-                2 - site
-                3 - year
+        :param iterable sites: :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+        :param boolean quiet: Whether to not print info about any errors that occur. Default is True
+        :param kwargs: Any keyword arguments specific to this filetype's :meth:`parse` function
+
+        :return: Iterator that yields a 4-tuple of
+                 (data for each site of whatever kind of data you asked for, unit, site, year)
         """
         for dataDir, unit, site, year in paths.dataDirs(sites, quiet= quiet):
             try:
@@ -41,13 +79,17 @@ class Accessor:
 
     def all(self, sites, quiet= True, **kwargs):
         """
-        Read data from all specified sites.
+        Read data from all specified sites into a single DataFrame or dict.
 
-        If the parser retuns a pandas NDFrame, all sites will be concatenated into
-        one concatenated dataframe, with siteID as outermost level of hierarchical index.
+        :param iterable sites: :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+        :param boolean quiet: Whether to not print info about any errors that occur. Default is True
+        :param kwargs: Any keyword arguments specific to this filetype's :meth:`parse` function
 
-        Otherwise, return a dict of { siteID: data }
+        :return: If :meth:`parse` retuns a pandas NDFrame for each site, all sites will be
+                 concatenated into one NDFrame, with :ref:`siteID` as outermost level of hierarchical index.
+                 Otherwise, returns a dict of ``{ siteID: data }``
         """
+
         results = { paths.siteID(unit, site, year): data for data, unit, site, year in self.__call__(sites, quiet= quiet, **kwargs) }
         try:
             joined = pd.concat(results)
@@ -65,7 +107,10 @@ class Accessor:
         """
         Iterate site-by-site over the paths to this sort of data file.
 
-        Yields a pathlib.Path, or possibly a list of pathlib.Path.
+        :param iterable sites: :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+
+        :return: An iterator that yields a 4-tuple of
+                 (pathlib.Path [or possibly a list of pathlib.Path], unit, site, year)
         """
         for dataDir, unit, site, year in paths.dataDirs(sites):
             try:
@@ -75,7 +120,18 @@ class Accessor:
 
     def access(self, site, **kwargs):
         """
-        Read data from one site, specified by siteID, data directory, (unit, site, year), or (dataDir, unit, site, year)
+        Read data from one site.
+
+        :param site: A single site or data directory specifier:
+
+                    * :ref:`siteID` string
+                    * pathlib.Path to a :ref:`data directory <dataDir>`
+                    * tuple of (unit, site, year) (all strings)
+                    * tuple of (dataDir, unit, site, year) (all strings, dataDir as pathlib.Path)
+
+        :param kwargs: Any keyword arguments specific to this filetype's :meth:`parse` function
+
+        :return: The result of the instance's :meth:`parse` function (typically a pandas DataFrame or Panel)
         """
         if isinstance(site, tuple) or isinstance(site, list):
             if len(site) == 4:
@@ -99,18 +155,35 @@ class Accessor:
 
     @staticmethod
     def parse(filepath, **kwargs):
+        """
+        Parse data from disk located at filepath.
+        This method is overridden in each instance by passing a parse function
+        into :meth:`__init__`.
+
+        All parse functions should have this signature:
+
+        :param filepath: The path(s) from which to read data
+        :type filepath: pathlib.Path, or iterable of pathlib.Path
+        :param kwargs: Any keyword arguments specific to reading this filetype
+
+        :return: Varies depending on what type of data is read.
+                 Typically, a pandas NDFrame.
+        """
         raise NotImplementedError
     
     def _filepath(self, dataDir, unit, site, year):
         """
-        Return the path (or list of paths) to the data file(s) for the given site of this type,
-        by filling in `self.pathToData`.
+        Return the path (or list of paths) to the data file(s) for the given site of this type.
+        This method can be overridden in an instance by passing a function as ``pathToData``
+        in :meth:``__init__``.
 
-        In the default implementation, self.pathToData can be a pathlib.Path that looks like a
-        Python format string, i.e. `paths.spl / "SRCID_{unit}{site}.txt"`. It is formatted with keyword
-        arguments for unit, site, and year, and joined onto the root data directory for the site. If
-        the path contains a `*` character, it will be passed to `glob`, and the resulting list will
-        be converted to pathlib.Paths and returned.
+        Otherwise, the default implementation fills in ``self.pathToData`` as a template.
+        ``pathToData`` (passed in :meth:`__init__`) can be a pathlib.Path that looks like a
+        Python format string, i.e. ``soundDB.paths.spl / "SRCID_{unit}{site}.txt"``.
+        It is formatted with keyword arguments for unit, site, and year,
+        and joined onto the root data directory for the site.
+        If the path contains a ``*`` character, it will be passed to ``glob``,
+        and the resulting list will be converted to pathlib.Paths and returned.
         """
         specificPathToData = str(self.pathToData).format(unit= unit, site= site, year= year)
         pathForReader = dataDir / pathlib.Path(specificPathToData)
