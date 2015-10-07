@@ -24,11 +24,11 @@ def nvspl(dirpath, interval= 1, onlyColumns= None, quiet= True):
 
     Keyword Args
     ------------
-    interval : int, optional, default 1
+    interval : int, default 1
         Only every i files in the directory will be imported
-    onlyColumns : sequence of column names (str) or indicies (int), optional, default None
+    onlyColumns : sequence of column names (str) or indicies (int), default None
         Only these columns will be imported. Use None to read all columns
-    quiet : boolean, optional, default True
+    quiet : boolean, default True
         Whether to not print progress reading files
 
     Returns
@@ -93,10 +93,6 @@ def srcid(path):
     The ``nvsplDate``, ``hr``, and ``secs`` columns are combined into a single DatetimeIndex for the DataFrame and dropped.
     The ``len`` column (length of the noise event) is converted to a pandas Timedelta.
 
-    Parameters
-    ----------
-    path : str or pathlib.Path
-
     Returns
     -------
     DataFrame
@@ -158,13 +154,9 @@ def loudEvents(path):
     Read a LOUNDEVENTS file into a pandas Panel.
 
     * The items axis (axis 0) is ["above", "all", "percent"]. So you'd use ``events["above"]`` to get a
-      sub-DataFrame of events that exceeded L_nat, where rows are indexed by date, and columns from 0 to 23 hours.
+      sub-DataFrame of events that exceeded $L_{nat}$, where rows are indexed by date, and columns from 0 to 23 hours.
     * The major_axis (axis 1) is ``date``: pandas DateTime objects
     * The minor_axis (axis 2) is ``hour``: 0 to 23
-
-    Parameters
-    ----------
-    path : str or pathlib.Path
 
     Returns
     -------
@@ -268,26 +260,37 @@ def dailyPA(path):
         >> df.loc[(slice(None), slice("1.1", "1.3")), "00h":"23h"]
         -> all dates, but just srcid rows between 1.1 and 1.3, and only columns from 00h to 23h.
 
-    For more, read the `pandas docs for heirarchical indexing <http://pandas-docs.pydata.org/pandas-docs/stable/advanced.html#advanced-indexing-with-hierarchical-index`_.
-    
-    Parameters
-    ----------
-    path : str or pathlib.Path
+    For more, read the :ref:`pandas docs for heirarchical indexing <pandas:advanced.hierarchical>`.
 
     Returns
     -------
-    DataFrame
+    MultiIndexed DataFrame
     """
     
     data = pd.read_csv(str(path),
                        engine= "c",
                        sep= "\t",
-                       parse_dates= True,
+                       parse_dates= False,
                        index_col= [0, 1])
 
     data.index.names = ["date", "srcid"]
+
+    # Check for AMT bug that adds row of ('nvsplDate', 'Total_All') with all 0s, drop if exists
+    if data.index[-1][0] == 'nvsplDate':
+        data = data.iloc[:-1, :]
+
+    ## Pandas cannot seem to handle a MultiIndex with dates;
+    ## slicing syntax becomes even crazier, and often doesn't even work.
+    ## So date conversion is disabled for now.
+    
+    # # Convert dates
+    # datetimes = data.index.get_level_values('date').to_datetime()
+    # data.index.set_levels(datetimes, level= 'date', inplace= True)
+
+    # Ensure MultiIndex sortedness
     data.sortlevel(inplace= True)
 
+    # Convert numerics
     return data.convert_objects(convert_dates= False, convert_numeric= True, convert_timedeltas= False, copy= False)
 
 
@@ -396,7 +399,7 @@ class metricsReader:
         pandas Panel of that table's data. ``n`` contains a DataFrame or Series of TimeDeltas of the
         lengths of the dataset, by season and table type.
 
-        So the object returned is structured like::
+        In other words, the retured object is structured::
 
             metrics
                 metadata: {"Day": "07:00:00 to 18:59:59", "Source of Interest": "Aircraft", ...}
@@ -425,22 +428,22 @@ class metricsReader:
                 - Items axis:  Table type    ("dBA" and "dBT"; "night" and "day"; "l90", "lnat", and "l50"; ...)
                 - Major axis:  Table columns ("12.5Hz" to "20000Hz"; 0 to 23; "Lmin", "L099", "Lnat", ...)
                 - Minor axis:  Table rows    ("L090", "Lnat", "L050"; "Day", "Night", "overall"; 0 to 23; 1.1, 1.2, 1.3, ...)
-                - **So these are accessed ``data.loc[ <season>, <tableType>, <columns>, <rows> ]``**
+                - **So these are accessed** ``data.loc[ <season>, <tableType>, <columns>, <rows> ]``
             + For metrics composed of just one table:
                 - Items axis: Season        ("Winter", "Summer", ...)
                 - Major axis: Table columns ("12.5Hz" to "20000Hz"; 0 to 23; "Lmin", "L099", "Lnat", ...)
                 - Minor axis: Table rows    ("L090", "Lnat", "L050"; "Day", "Night", "overall"; 0 to 23; 1.1, 1.2, 1.3, ...)
-                - **So these are accessed ``data.loc[ <season>, <columns>, <rows> ]``**
+                - **So these are accessed** ``data.loc[ <season>, <columns>, <rows> ]``
 
         And the ``n`` DataFrames or Series are indexed:
 
             + For metrics composed of multiple tables (DataFrame):
                 - Columns: Season     ("Winter", "Summer", ...)
                 - Rows:    Table type ("dBA" and "dBT"; "night" and "day"; "l90", "lnat", and "l50"; ...)
-                - **So these are accessed ``n.loc[ <season>, <tableType> ]``**
+                - **So these are accessed** ``n.loc[ <season>, <tableType> ]``
             + For metrics composed of just one table (Series):
                 - Rows: Season     ("Winter", "Summer", ...)
-                - **So these are accessed ``n[ <season> ]``**
+                - **So these are accessed** ``n[ <season> ]``
 
         Examples (where the object returned from this function is stored as ``metrics``)::
 
@@ -470,9 +473,14 @@ class metricsReader:
             + The ``frequency``, ``ambient``, and ``percentTimeAbove`` metrics have the additional row ``"overall"``
               added along with ``"Day"`` and ``"Night"``. This is the logarithmic mean SPL for both day and night.
 
-        A TypeError is raised if the version of the file does not match the reader.
-        A ValueError is raised if the header cannot be parsed, or exactly the wrong number of tables are found in the file.
-        OSErrors are unhandled, and could be raised if the file is missing.
+        Raises
+        ------
+        TypeError
+            If the version of the file does not match the reader
+        ValueError
+            If the header cannot be parsed
+        OSError
+            Unhandled---raised if the file is missing
         """
 
         with open(str(path)) as f:
