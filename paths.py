@@ -9,11 +9,10 @@ import pandas
 ############
 ### Metadata
 
-sound = pathlib.Path("T:/ResMgmt/WAGS/Sound")
-analysis = sound / 'Analysis'
+t_analysis = pathlib.Path("T:/ResMgmt/WAGS/Sound/Analysis")
 
-derivedData = analysis / 'DENA Parkwide Derived Data 2015 08 12 T.xls'
-metadata = analysis / 'Complete_Metadata_AKR_2006-2015  T.xlsx'
+derivedData = t_analysis / 'DENA Parkwide Derived Data 2015 08 12 T.xls'
+metadata = t_analysis / 'Complete_Metadata_AKR_2006-2015  T.xlsx'
 
 ############
 ### Raw data
@@ -46,7 +45,7 @@ _dataDir_regex = re.compile(r"^(\d{4}) ([\w\d]{4})([\w\d]{4}) (.*)")
 
 def splitSiteID(siteID):
     """
-    Returns a 3-tuple of unit, site, and year for a site ID.
+    Returns a 3-tuple of unit, site, and year for a site ID string.
     Site IDs are formatted as UNITSITEYEAR, i.e. DENAUPST2015
     """
     match = _siteID_regex.match(siteID)
@@ -58,7 +57,7 @@ def siteID(unit, site, year):
     """
     Formats unit, site, and year into a site ID (UNITSITEYEAR, i.e. DENAUPST2015)
     """
-    return unit+site+year
+    return unit+site+str(year)
 
 def splitDataDir(dataDir):
     """

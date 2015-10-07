@@ -7,8 +7,8 @@ from . import paths
 def fullMetadata():
     """
     Returns a DataFrame of metadata merged with derived data, with overlapping
-    columns resolved. The DataFrame is indexed by site id: the 12-character
-    code of UNITSITEYEAR, i.e. DENAUPST2015.
+    columns resolved, and all column names in lowercase.
+    The DataFrame is indexed by site id: the 12-character code of UNITSITEYEAR, i.e. DENAUPST2015.
 
     TODO: save the result, and recompute it only when its date modified is older than the
           date modified of metadata or derived data
@@ -32,7 +32,7 @@ def fullMetadata():
         full.rename(columns= {col+"_meta": col}, inplace= True)
         full.drop(col+"_derived", axis= 1)
 
-    ids = full.apply(lambda site: site.unit + site.site + str(int(site.year)), axis= 1)
+    ids = full.apply(lambda site: paths.siteID(site.unit, site.site, site.year), axis= 1)
     full.index = ids
     full.winter_site = full.winter_site.astype(bool)
 
