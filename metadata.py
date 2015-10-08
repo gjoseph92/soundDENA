@@ -40,7 +40,7 @@ def fullMetadata():
         stringCols = df.dtypes[ df.dtypes == np.object ].index
         df[stringCols] = df[stringCols].apply(lambda col: col.str.strip())
 
-    full = pd.merge(metadata, derivedData, on=['unit', 'site', 'year'], suffixes= ("_meta", "_derived"))
+    full = pd.merge(metadata, derivedData, on=['unit', 'site', 'year'], how= "outer", suffixes= ("_meta", "_derived"))
     
     # Resolve overlapping columns, tie goes to metadata
     dupCols = derivedData.columns.intersection(metadata.columns).difference(['unit', 'site', 'year'])
