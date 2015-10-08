@@ -38,4 +38,7 @@ def fullMetadata():
 
     return full
 
+#: A DataFrame of the Complete Metadata and Derived Data workbooks.
+#: Indexed by ``siteID``, with the union of all columns
+#: in both those workbooks.
 metadata = fullMetadata()

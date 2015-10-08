@@ -57,7 +57,9 @@ def siteID(unit, site, year):
     """
     Formats unit, site, and year into a site ID (UNITSITEYEAR, i.e. DENAUPST2015)
     """
-    return unit+site+str(year)
+    if type(year) is not str:
+        year = str(int(year))
+    return unit+site+year
 
 def splitDataDir(dataDir):
     """
