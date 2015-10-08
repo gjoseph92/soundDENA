@@ -61,6 +61,9 @@ class Accessor:
         """
         Iterate site-by-site over a type of data.
 
+        Data is yielded in the same order as the given sites,
+        though some sites may be missing if they lack data.
+
         Parameters
         ----------
         sites : iterable
