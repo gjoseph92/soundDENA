@@ -11,8 +11,8 @@ import pandas
 
 t_analysis = pathlib.Path("T:/ResMgmt/WAGS/Sound/Analysis")
 
-derivedData = t_analysis / 'DENA Parkwide Derived Data 2015 08 12 T.xls'
-metadata = t_analysis / 'Complete_Metadata_AKR_2006-2015  T.xlsx'
+derivedData = t_analysis / 'DENA Parkwide Derived Data 2015 09 15 T.xls'
+metadata = t_analysis / 'Complete_Metadata_AKR_2001-2015  T.xlsx'
 
 ############
 ### Raw data
@@ -128,12 +128,13 @@ def dataDirs(sites, quiet= True):
     """
     Generator that returns paths to raw data directories corresponding to the given sites.
 
-    Sites can be a pandas DataFrame, in which case its index is used as the site IDs.
-    Otherwise, an iterable or singleton string of site ID(s) also works.
+    Sites can be a pandas DataFrame or Series, in which case its index is used as the site IDs.
+    Otherwise, an iterable or singleton string of site ID(s) also works. Paths are yielded in
+    the same order the sites are given (though some may be missing if data is not available).
 
     Yields a tuple of (pathlib.Path, unit, site, year) for the directories that contian raw data for the sites.
     """
-    if isinstance(sites, pandas.core.frame.DataFrame):
+    if isinstance(sites, pandas.core.frame.NDFrame):
         ## If given a dataframe, use its index as site ids
         siteIDs = sites.index
     elif isinstance(sites, str):
