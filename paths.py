@@ -27,7 +27,7 @@ nvspl    = data / "NVSPL"
 audio    = data / "AUDIO"
 photos   = data / "PHOTOS"
 partial_nvspl  = data / "PartialDays_NVSPL"
-prcessed_nvspl = data / "Processed_NVSPL"
+processed_nvspl = data / "Processed_NVSPL"
 
 analysis = pathlib.Path( "02 ANALYSIS" )
 

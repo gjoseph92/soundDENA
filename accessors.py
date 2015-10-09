@@ -102,13 +102,9 @@ def nvsplPaths(dataDir, unit, site, year, processed= True, partialDays= False, *
 
     Keyword Args
     ------------
-    processed: {True, False, 'only'}, default True
-        Whether to use files from Processed_NVSPL or NVSPL.
-        If True (default), all files in Processed_NVSPL are returned, as well as any files in NVSPL
-        (and possibly PartialDays) that are *not* already in Processed_NVSPL.
-        If False, only original files from NVSPL (and possibly partialDays) are returned.
-        If ``'only'``, only files in Processed_NVSPL are returned, with partial days filtered out
-        if partialDays is False.
+    processed: boolean, default True
+        If True, use the Processed_NVSPL directory instead of NVSPL when it exists and is not empty.
+        If False, always use original NVSPL.
     partialDays: boolean, default False
         Whether to include any data from days with less than 24 hours of NVSPL
 
@@ -121,50 +117,28 @@ def nvsplPaths(dataDir, unit, site, year, processed= True, partialDays= False, *
     """
     globPattern = "NVSPL_{}{}*.txt".format(unit, site)
 
+    processedPath = dataDir/paths.processed_nvspl
+    if processed and processedPath.exists():
+        processedPaths = sorted(processedPath.glob(globPattern))
+        if len(processedPaths) > 0:
+            if partialDays:
+                return processedPaths
+            else:
+                # Filter out any partial days hanging around in Processed_NVSPL
+                getDayFromFilename = lambda filepath: filepath.stem.rsplit(sep= "_", maxsplit= 2)[1]
 
-    if processed == True:
-        processedNames = { path.name : path for path in (dataDir/paths.prcessed_nvspl).glob(globPattern) }
+                impartialPaths = []
+                for day, files in itertools.groupby( processedPaths, key= getDayFromFilename ):
+                    files = list(files)
+                    if len(files) == 24:
+                        impartialPaths.extend(files)
+                return impartialPaths
 
-        nvspl_iter = (dataDir/paths.nvspl).glob(globPattern)
-        partialDays_iter = (dataDir/paths.partial_nvspl).glob(globPattern)
-        if partialDays:
-            unprocessed_iter = itertools.chain(nvspl_iter, partialDays_iter)
-        else:
-            unprocessed_iter = nvspl_iter
-            # Filter out any partial days hanging around in Processed_NVSPL
-            for partial_path in partialDays_iter:
-                try:
-                    del processedNames[partial_path.name]
-                except KeyError:
-                    pass
+    nvsplPaths = (dataDir/paths.nvspl).glob(globPattern)
+    if partialDays:
+        nvsplPaths = itertools.chain(nvsplPaths, (dataDir/paths.partial_nvspl).glob(globPattern))
 
-        nvsplPaths = [ path for path in unprocessed_iter if path.name not in processedNames ]
-        nvsplPaths.extend(processedNames.values())
-        nvsplPaths.sort()
-        return nvsplPaths
-
-    elif processed == 'only':
-        processed_iter = (dataDir/paths.prcessed_nvspl).glob(globPattern)
-
-        if partialDays:
-            return sorted(processed_iter)
-        else:
-            # Filter out any partial days hanging around in Processed_NVSPL
-            getDayFromFilename = lambda filepath: filepath.stem.rsplit(sep= "_", maxsplit= 2)[1]
-
-            nvsplPaths = []
-            for day, files in itertools.groupby( sorted(processed_iter), key= getDayFromFilename ):
-                files = list(files)
-                if len(files) == 24:
-                    nvsplPaths.extend(files)
-
-            return nvsplPaths
-    else:
-        nvsplPaths = list((dataDir/paths.nvspl).glob(globPattern))
-        if partialDays:
-            nvsplPaths.extend((dataDir/paths.partial_nvspl).glob(globPattern))
-        nvsplPaths.sort()
-        return nvsplPaths
+    return sorted(nvsplPaths)
 
 
 def srcid(path):
