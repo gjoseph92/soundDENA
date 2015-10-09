@@ -9,8 +9,10 @@ import collections
 import warnings
 import os
 import time
+import itertools
 
-def nvspl(dirpath, interval= 1, onlyColumns= None, quiet= True):
+def nvspl(filepaths, interval= 1, onlyColumns= None, quiet= True, **kwargs):
+    # **kwargs used to handle being given keyword args for nvsplPaths() as well
     """
     Read all the NVSPL files in a directory into a single pandas DataFrame, indexed by date.
 
@@ -19,8 +21,9 @@ def nvspl(dirpath, interval= 1, onlyColumns= None, quiet= True):
 
     Parameters
     ----------
-    dirpath : str or pathlib.Path
-        every file in this directory will be read in as an NVSPL
+    filepaths : list of str or pathlib.Path
+        List of paths to NVSPL files, all of which will be read into one DataFrame.
+        Assumed to be sorted.
 
     Keyword Args
     ------------
@@ -36,12 +39,8 @@ def nvspl(dirpath, interval= 1, onlyColumns= None, quiet= True):
     DataFrame
         Indexed by date, with frequency column names as decimals instead of "12p5h"
     """
-    if type(dirpath) is str:
-        dirpath = pathlib.Path(dirpath)
 
     dataframes = []
-
-    filepaths = sorted(list(dirpath.iterdir()))
 
     start_t = time.time()
     for i, filepath in enumerate(filepaths):
@@ -84,6 +83,88 @@ def nvspl(dirpath, interval= 1, onlyColumns= None, quiet= True):
 
     if not quiet: print( "Imported {} files in {:.1f} sec".format(len(dataframes), time.time() - start_t) )
     return site
+
+def nvsplPaths(dataDir, unit, site, year, processed= True, partialDays= False, **kwargs):
+    # **kwargs used to handle being given keyword args for nvspl() as well
+    """
+    Return list of pathlib.Paths to NVSPL files for a site, handling Processed_NVSPL and partial days.
+
+    Parameters
+    ----------
+    dataDir : pathlib.Path
+        The root data directory for a site
+    unit : str
+        Unit of the site
+    site : str
+        Site code of the site
+    year : str
+        Year of the site
+
+    Keyword Args
+    ------------
+    processed: {True, False, 'only'}, default True
+        Whether to use files from Processed_NVSPL or NVSPL.
+        If True (default), all files in Processed_NVSPL are returned, as well as any files in NVSPL
+        (and possibly PartialDays) that are *not* already in Processed_NVSPL.
+        If False, only original files from NVSPL (and possibly partialDays) are returned.
+        If ``'only'``, only files in Processed_NVSPL are returned, with partial days filtered out
+        if partialDays is False.
+    partialDays: boolean, default False
+        Whether to include any data from days with less than 24 hours of NVSPL
+
+    Returns
+    -------
+    list of pathlib.Path
+        Paths to all NVSPL files for this site
+
+    This function follows the signature for ``pathToData()`` as defined in :meth:`soundDB.Accessor.__init__`.
+    """
+    globPattern = "NVSPL_{}{}*.txt".format(unit, site)
+
+
+    if processed == True:
+        processedNames = { path.name : path for path in (dataDir/paths.prcessed_nvspl).glob(globPattern) }
+
+        nvspl_iter = (dataDir/paths.nvspl).glob(globPattern)
+        partialDays_iter = (dataDir/paths.partial_nvspl).glob(globPattern)
+        if partialDays:
+            unprocessed_iter = itertools.chain(nvspl_iter, partialDays_iter)
+        else:
+            unprocessed_iter = nvspl_iter
+            # Filter out any partial days hanging around in Processed_NVSPL
+            for partial_path in partialDays_iter:
+                try:
+                    del processedNames[partial_path.name]
+                except KeyError:
+                    pass
+
+        nvsplPaths = [ path for path in unprocessed_iter if path.name not in processedNames ]
+        nvsplPaths.extend(processedNames.values())
+        nvsplPaths.sort()
+        return nvsplPaths
+
+    elif processed == 'only':
+        processed_iter = (dataDir/paths.prcessed_nvspl).glob(globPattern)
+
+        if partialDays:
+            return sorted(processed_iter)
+        else:
+            # Filter out any partial days hanging around in Processed_NVSPL
+            getDayFromFilename = lambda filepath: filepath.stem.rsplit(sep= "_", maxsplit= 2)[1]
+
+            nvsplPaths = []
+            for day, files in itertools.groupby( sorted(processed_iter), key= getDayFromFilename ):
+                files = list(files)
+                if len(files) == 24:
+                    nvsplPaths.extend(files)
+
+            return nvsplPaths
+    else:
+        nvsplPaths = list((dataDir/paths.nvspl).glob(globPattern))
+        if partialDays:
+            nvsplPaths.extend((dataDir/paths.partial_nvspl).glob(globPattern))
+        nvsplPaths.sort()
+        return nvsplPaths
 
 
 def srcid(path):
@@ -282,7 +363,7 @@ def dailyPA(path):
     ## Pandas cannot seem to handle a MultiIndex with dates;
     ## slicing syntax becomes even crazier, and often doesn't even work.
     ## So date conversion is disabled for now.
-    
+
     # # Convert dates
     # datetimes = data.index.get_level_values('date').to_datetime()
     # data.index.set_levels(datetimes, level= 'date', inplace= True)
@@ -664,7 +745,7 @@ metrics.__doc__ = metricsReader.__call__.__doc__
 # in __init__.py, all entries instantiated as Accessors and
 # added to the module's namespace.
 accessorExports = {
-    "nvspl": (nvspl, paths.nvspl),
+    "nvspl": (nvspl, nvsplPaths),
     "srcid": (srcid, paths.spl / "SRCID_{unit}{site}.txt"),
     "loudevents": (loudEvents, paths.spl / "LOUDEVENTS_{unit}{site}.txt"),
     "audibility": (audibility, paths.wav),

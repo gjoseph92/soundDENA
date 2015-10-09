@@ -39,12 +39,17 @@ class Accessor:
         If **pathToData** is a function, it should take the details of a specific site
         and return the path to the file(s) within that site, with this signature:
 
-        .. function:: pathToData(dataDir, unit, site, year)
+        .. function:: pathToData(dataDir, unit, site, year, **kwargs)
 
             :param pathlib.Path dataDir: The root data directory for a site
             :param str unit: Unit of the site
             :param str site: Site code of the site
             :param str year: Year of the site
+            :param kwargs: Any keyword arguments related to path selection.
+                           The same keyword arguments will be given to both **pathToData**
+                           and **parserFunc**, so they should both be able to handle unexpected
+                           keyword arguments by having **kwargs as the last item in their
+                           argument lists.
 
             :return: Varies; the result is passed directly to ``parserFunc``.
                      Often, a pathlib.Path or list of pathlib.Path to the file(s)
@@ -71,7 +76,7 @@ class Accessor:
         quiet : boolean, optional
             Whether to not print info about any errors that occur
         kwargs
-            Any keyword arguments specific to this filetype's :meth:`parse` function
+            Any keyword arguments specific to this filetype's :meth:`parse` or ``pathToData`` function
 
         Yields
         ------
@@ -105,7 +110,7 @@ class Accessor:
         quiet : boolean, optional
             Whether to not print info about any errors that occur
         kwargs
-            Any keyword arguments specific to this filetype's :meth:`parse` function
+            Any keyword arguments specific to this filetype's :meth:`parse` or ``pathToData`` function
 
         Returns
         -------
@@ -128,7 +133,7 @@ class Accessor:
         except TypeError:
             return results
 
-    def paths(self, sites):
+    def paths(self, sites, quiet= True, **kwargs):
         """
         Iterate site-by-site over the paths to this sort of data file.
 
@@ -136,6 +141,8 @@ class Accessor:
         ----------
         sites : iterable of str, or NDFrame
             :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`
+        kwargs
+            Any keyword arguments specific to this filetype's ``pathToData`` function
 
         Yields
         ------
@@ -145,9 +152,9 @@ class Accessor:
         site : str
         year : str
         """
-        for dataDir, unit, site, year in paths.dataDirs(sites):
+        for dataDir, unit, site, year in paths.dataDirs(sites, quiet= quiet):
             try:
-                yield self._filepath(dataDir, unit, site, year), unit, site, year
+                yield self._filepath(dataDir, unit, site, year, **kwargs), unit, site, year
             except OSError:
                 continue
 
@@ -165,7 +172,7 @@ class Accessor:
                 * tuple of (unit, site, year) (all strings)
                 * tuple of (dataDir, unit, site, year) (all strings, dataDir as pathlib.Path)
         kwargs
-            Any keyword arguments specific to this filetype's :meth:`parse` function
+            Any keyword arguments specific to this filetype's :meth:`parse` or ``pathToData`` function
 
         Returns
         -------
@@ -189,7 +196,7 @@ class Accessor:
         else:
             raise ValueError("Unknown site specification {}".format(site))
 
-        filePath = self._filepath(dataDir, unit, site, year)
+        filePath = self._filepath(dataDir, unit, site, year, **kwargs)
         return self.parse(filePath, **kwargs)
 
     @staticmethod
@@ -215,7 +222,7 @@ class Accessor:
         """
         raise NotImplementedError
     
-    def _filepath(self, dataDir, unit, site, year):
+    def _filepath(self, dataDir, unit, site, year, **kwargs):
         """
         Return the path (or list of paths) to the data file(s) for the given site of this type.
         This method can be overridden in an instance by passing a function as ``pathToData``
