@@ -30,7 +30,11 @@ def nvspl(filepaths, interval= 1, onlyColumns= None, quiet= True, **kwargs):
     interval : int, default 1
         Only every i files in the directory will be imported
     onlyColumns : sequence of column names (str) or indicies (int), default None
-        Only these columns will be imported. Use None to read all columns
+        Only these columns will be imported. Use None to read all columns.
+        If names are strings, they must be the *original* names in the NVSPL file,
+        like "12ph5".
+        If "STime" or 1 is not included, it will be added automatically, as these
+        are necessary for indexing by date.
     quiet : boolean, default True
         Whether to not print progress reading files
 
@@ -42,6 +46,23 @@ def nvspl(filepaths, interval= 1, onlyColumns= None, quiet= True, **kwargs):
 
     dataframes = []
 
+    index_index = 1 # Default position of the index column (STime)
+    if onlyColumns is not None:
+        # Ensure we read the STime (date) column, otherwise indexing will be messed up
+        # TODO: conversion between reasonable column names and 12p5h style names
+        types = list(map(type, onlyColumns))
+        if types == [str]*len(onlyColumns):
+            if "STime" not in onlyColumns:
+                onlyColumns = ["STime"] + onlyColumns
+            index_index = 0
+        elif types == [str]*len(onlyColumns):
+            if 1 not in onlyColumns:
+                onlyColumns = [1] + onlyColumns
+                onlyColumns.sort()
+            index_index = onlyColumns.index(1)
+        else:
+            raise ValueError("onlyColumns must be a list of strings or of integers")
+
     start_t = time.time()
     for i, filepath in enumerate(filepaths):
             if i % interval == 0:
@@ -49,7 +70,7 @@ def nvspl(filepaths, interval= 1, onlyColumns= None, quiet= True, **kwargs):
                                  engine= 'c',
                                  # sep= ',',
                                  parse_dates= True,
-                                 index_col= 1,
+                                 index_col= index_index,
                                  infer_datetime_format= True,
                                  usecols= onlyColumns
                                  )
@@ -64,6 +85,9 @@ def nvspl(filepaths, interval= 1, onlyColumns= None, quiet= True, **kwargs):
     site.index.name = "date"
     columns = { column: column.replace('H', '').replace('p', '.') for column in site.columns if re.match(r"H\d+p?\d*", column) is not None }
     site.rename(columns= columns, inplace= True)
+
+    # TODO: rename dbA, dbT to dBA, dBT for consistencty
+    # TODO: potentially drop siteID column
 
     # Coerce numeric columns to floats, in case of "-Infinity" values
     try:
