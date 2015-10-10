@@ -4,6 +4,7 @@ import pandas as pd
 import pathlib
 import glob
 import traceback
+import sys
 
 class Accessor:
     def __init__(self, parserFunc, pathToData):
@@ -86,10 +87,14 @@ class Accessor:
         site : str
         year : str
         """
+        ## TODO: progress bar?
         for dataDir, unit, site, year in paths.dataDirs(sites, quiet= quiet):
             try:
                 data = self.access((dataDir, unit, site, year), **kwargs)
                 yield data, unit, site, year
+            except KeyboardInterrupt:
+                print("*** KeyboardInterrupt: halting execution ***")
+                sys.exit(1)
             except OSError as e:
                 if not quiet: print( e )
             except:
