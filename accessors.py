@@ -100,7 +100,8 @@ def nvspl(filepaths, interval= 1, onlyColumns= None, quiet= True, **kwargs):
          ]
         presentNumericCols = site.columns.intersection(numericCols)
         if len(presentNumericCols) > 0:
-            site[presentNumericCols] = site[presentNumericCols].convert_objects(convert_dates= False, convert_numeric= True, convert_timedeltas= False, copy= False)
+            # site[presentNumericCols] = site[presentNumericCols].convert_objects(convert_dates= False, convert_numeric= True, convert_timedeltas= False, copy= False)
+            site[presentNumericCols].astype('float32', copy= False, raise_on_error= False)
 
     except KeyError:
         pass
