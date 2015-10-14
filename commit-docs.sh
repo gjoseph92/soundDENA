@@ -52,7 +52,7 @@ do
 done
 
 echo "Copying $DOCDIR/_build/html/* to working directory"
-cp $DOCDIR/_build/html/* .
+cp -r $DOCDIR/_build/html/* .
 git add --all .
 git reset HEAD $DOCDIR
 git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
