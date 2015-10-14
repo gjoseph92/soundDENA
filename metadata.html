@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Metadata &mdash; soundDB 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="soundDB 0.0.1 documentation" href="index.html" />
+    <link rel="prev" title="Path &amp; Directory Structure" href="paths.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paths.html" title="Path &amp; Directory Structure"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">soundDB 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="metadata">
+<span id="id1"></span><h1>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h1>
+<p>The metadata about each site is typically the entry point for soundDB data access, as it&#8217;s queried to identify from which sites data should be read. The <a class="reference internal" href="paths.html#soundDB.paths.metadata" title="soundDB.paths.metadata"><code class="xref py py-attr docutils literal"><span class="pre">Complete</span> <span class="pre">Metadata</span></code></a> and <a class="reference internal" href="paths.html#soundDB.paths.derivedData" title="soundDB.paths.derivedData"><code class="xref py py-attr docutils literal"><span class="pre">Derived</span> <span class="pre">Data</span></code></a> Excel workbooks are joined into one DataFrame when soundDB is imported.</p>
+<dl class="data">
+<dt id="soundDB.soundDB.metadata">
+<code class="descclassname">soundDB.</code><code class="descname">metadata</code><a class="headerlink" href="#soundDB.soundDB.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>A DataFrame of the Complete Metadata and Derived Data workbooks. Indexed by <code class="docutils literal"><span class="pre">siteID</span></code>, with the union of all columns in both those workbooks. The column names and data are slightly modified for consistency; see <a class="reference internal" href="#soundDB.fullMetadata" title="soundDB.fullMetadata"><code class="xref py py-func docutils literal"><span class="pre">fullMetadata()</span></code></a> for specifics.</p>
+</dd></dl>
+
+<p>Though unlikely, if these workbooks ever change midway through a script or interactive session, you can reload them using:</p>
+<dl class="function">
+<dt id="soundDB.fullMetadata">
+<code class="descclassname">soundDB.</code><code class="descname">fullMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/metadata.html#fullMetadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.fullMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DataFrame of metadata merged with derived data, with overlapping
+columns resolved. Some column names and values are changed for consistency.</p>
+<p>Transformations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">unit</span></code> column refers to <code class="docutils literal"><span class="pre">Park</span></code> from Derived Data and <code class="docutils literal"><span class="pre">unit</span></code> from Metadata</li>
+<li><code class="docutils literal"><span class="pre">code</span></code> column is renamed to <code class="docutils literal"><span class="pre">site</span></code> (the 4-character site code)</li>
+<li><code class="docutils literal"><span class="pre">site</span></code> column is renamed to <code class="docutils literal"><span class="pre">title</span></code></li>
+<li>All column names are lowercased</li>
+<li>In overlapping columns, values from Metadata are used
+where values from both Metadata and Derived Data exist</li>
+<li>Leading and trailing whitespace is stripped from all string values</li>
+<li>Columns that contain only the values 0 and 1 are assumed to be boolean,
+and converted to a boolean datatype</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>DataFrame</em> &#8211;
+Indexed by siteID (the 12-character code of UNITSITEYEAR, i.e. DENAUPST2015)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">soundDB</a></h1>
+
+
+
+<p class="blurb">Subselecting data from the NSNSD file structure since 2015.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">What you&#8217;ll use 90% of the time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accessor.html">The Accessor Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filetypes.html">Filetype-Specific Accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">Path &amp; Directory Structure</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Metadata</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Gabe Joseph.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+      |
+      <a href="_sources/metadata.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>

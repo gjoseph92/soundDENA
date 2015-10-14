@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Filetype-Specific Accessors &mdash; soundDB 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="soundDB 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="Path &amp; Directory Structure" href="paths.html" />
+    <link rel="prev" title="The Accessor Class" href="accessor.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="paths.html" title="Path &amp; Directory Structure"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="accessor.html" title="The Accessor Class"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">soundDB 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="filetype-specific-accessors">
+<span id="filetypes"></span><h1>Filetype-Specific Accessors<a class="headerlink" href="#filetype-specific-accessors" title="Permalink to this headline">¶</a></h1>
+<p>soundDB includes Accessor instances for the following filetypes. (They&#8217;re available as <code class="docutils literal"><span class="pre">soundDB.&lt;filetype&gt;</span></code>, i.e. <code class="docutils literal"><span class="pre">soundDB.nvspl(sites)</span></code>, <code class="docutils literal"><span class="pre">soundDB.srcid.all(sites)</span></code>, etc.) This page lists the documentation for each of their <a class="reference internal" href="accessor.html#soundDB.Accessor.parse" title="soundDB.Accessor.parse"><code class="xref py py-meth docutils literal"><span class="pre">parse()</span></code></a> methods&#8212;how they behave on data from a single site. This behavior is then applied to multiple sites using <a class="reference internal" href="accessor.html#soundDB.Accessor.__call__" title="soundDB.Accessor.__call__"><code class="xref py py-meth docutils literal"><span class="pre">__call__()</span></code></a>, or concatenated using <a class="reference internal" href="accessor.html#soundDB.Accessor.all" title="soundDB.Accessor.all"><code class="xref py py-meth docutils literal"><span class="pre">all()</span></code></a>.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Remember, you will be using these wrapped up in instances of <a class="reference internal" href="accessor.html#soundDB.Accessor" title="soundDB.Accessor"><code class="xref py py-class docutils literal"><span class="pre">soundDB.Accessor</span></code></a>. Though this page implies that <code class="docutils literal"><span class="pre">soundDB.nvspl</span></code> returns a DataFrame, <code class="docutils literal"><span class="pre">soundDB.nvspl(sites)</span></code> is actually an iterator, which yields such a DataFrame for every site.</p>
+</div>
+<dl class="data">
+<dt id="soundDB.nvspl">
+<code class="descclassname">soundDB.</code><code class="descname">nvspl</code><a class="headerlink" href="#soundDB.nvspl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all the NVSPL files in a directory into a single pandas DataFrame, indexed by date.</p>
+<p>To speed up the process during testing, set the interval: only every ith file will be read.
+You can also specify only the columns you need, reducing import time and memory footprint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filepaths</strong> (<em>list of str or pathlib.Path</em>) &#8211; List of paths to NVSPL files, all of which will be read into one DataFrame.
+Assumed to be sorted.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>interval</strong> (<em>int, default 1</em>) &#8211;
+Only every i files in the directory will be imported</li>
+<li><strong>onlyColumns</strong> (<em>sequence of column names (str) or indicies (int), default None</em>) &#8211;
+Only these columns will be imported. Use None to read all columns.
+If names are strings, they must be the <em>original</em> names in the NVSPL file,
+like &#8220;12ph5&#8221;.
+If &#8220;STime&#8221; or 1 is not included, it will be added automatically, as these
+are necessary for indexing by date.</li>
+<li><strong>quiet</strong> (<em>boolean, default True</em>) &#8211;
+Whether to not print progress reading files</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>DataFrame</em> &#8211;
+Indexed by date, with frequency column names as decimals instead of &#8220;12p5h&#8221;</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="soundDB.srcid">
+<code class="descclassname">soundDB.</code><code class="descname">srcid</code><a class="headerlink" href="#soundDB.srcid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a SPLAT SRCID file into a pandas DataFrame.</p>
+<p>The <code class="docutils literal"><span class="pre">nvsplDate</span></code>, <code class="docutils literal"><span class="pre">hr</span></code>, and <code class="docutils literal"><span class="pre">secs</span></code> columns are combined into a single DatetimeIndex for the DataFrame and dropped.
+The <code class="docutils literal"><span class="pre">len</span></code> column (length of the noise event) is converted to a pandas Timedelta.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>DataFrame</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="soundDB.loudevents">
+<code class="descclassname">soundDB.</code><code class="descname">loudevents</code><a class="headerlink" href="#soundDB.loudevents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a LOUNDEVENTS file into a pandas Panel.</p>
+<ul class="simple">
+<li>The items axis (axis 0) is [&#8220;above&#8221;, &#8220;all&#8221;, &#8220;percent&#8221;]. So you&#8217;d use <code class="docutils literal"><span class="pre">events[&quot;above&quot;]</span></code> to get a
+sub-DataFrame of events that exceeded $L_{nat}$, where rows are indexed by date, and columns from 0 to 23 hours.</li>
+<li>The major_axis (axis 1) is <code class="docutils literal"><span class="pre">date</span></code>: pandas DateTime objects</li>
+<li>The minor_axis (axis 2) is <code class="docutils literal"><span class="pre">hour</span></code>: 0 to 23</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>Panel</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="soundDB.dailypa">
+<code class="descclassname">soundDB.</code><code class="descname">dailypa</code><a class="headerlink" href="#soundDB.dailypa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a DAILYPA (percent time audible) file into a MultiIndexed pandas DataFrame.</p>
+<p>The result will be indexed on two levels: <cite>date</cite> and <cite>srcid</cite>.
+This allows for interesting sub-indexing, such as:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt;&gt; data.loc[&quot;2013-06-29&quot;, :]
+-&gt; just srcid rows for 6/29/13, and all columns
+
+&gt;&gt; data.loc[(slice(None), &quot;Total_All&quot;), :]
+-&gt; all dates, but just &quot;Total_All&quot; srcid rows, and all columns
+
+&gt;&gt; df.loc[(slice(None), &quot;Total_All&quot;), &quot;00-23h&quot;]
+-&gt; all dates, just &quot;Total_All&quot; srcid rows, and only the 00-23h column.
+   (Basically, a Series of total percent time audible per day.)
+
+&gt;&gt; df.loc[(slice(None), slice(&quot;1.1&quot;, &quot;1.3&quot;)), &quot;00h&quot;:&quot;23h&quot;]
+-&gt; all dates, but just srcid rows between 1.1 and 1.3, and only columns from 00h to 23h.
+</pre></div>
+</div>
+<p>For more, read the <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/advanced.html#advanced-hierarchical" title="(in pandas v0.17.0)"><span class="xref std std-ref">pandas docs for heirarchical indexing</span></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>MultiIndexed DataFrame</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="soundDB.metrics">
+<code class="descclassname">soundDB.</code><code class="descname">metrics</code><a class="headerlink" href="#soundDB.metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all tables from a metrics file.</p>
+<p>Returns an object (a named tuple, really) with attributes for each metric in the file, as well as
+<code class="docutils literal"><span class="pre">metadata</span></code>, which is a dict of the colon-seperated key-value pairs in the file&#8217;s header.
+Missing metrics are stored as None. (SPLAT-related metrics such as <code class="docutils literal"><span class="pre">noiseFreeInterval</span></code> are often missing.)</p>
+<p>Otherwise, each attribute for a table has two attributes itself: <code class="docutils literal"><span class="pre">data</span></code> and <code class="docutils literal"><span class="pre">n</span></code>. <code class="docutils literal"><span class="pre">data</span></code> contains a
+pandas Panel of that table&#8217;s data. <code class="docutils literal"><span class="pre">n</span></code> contains a DataFrame or Series of TimeDeltas of the
+lengths of the dataset, by season and table type.</p>
+<p>In other words, the retured object is structured:</p>
+<div class="highlight-python"><div class="highlight"><pre>metrics
+    metadata: {&quot;Day&quot;: &quot;07:00:00 to 18:59:59&quot;, &quot;Source of Interest&quot;: &quot;Aircraft&quot;, ...}
+    hourlyMedian
+        data: Panel
+        n: DataFrame
+    frequency
+        data: Panel
+        n: DataFrame
+    ambient
+        data: Panel
+        n: DataFrame
+    ...
+    ...
+</pre></div>
+</div>
+<p>A primary purpose of this reader is to combine multiple tables of related data in the metrics file
+into single structures. (For example, Median Hourly Metrics could have four tables, for dBA and dBT
+in both Summer and Winter. These are combined into a single Panel, making it easy to perform complex
+selections across the tables&#8212;e.g. dBA in both seasons.)</p>
+<p>Here&#8217;s how these <code class="docutils literal"><span class="pre">data</span></code> Panels are indexed:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>For metrics composed of multiple tables:</dt>
+<dd><ul class="first last simple">
+<li>Labels axis: Season        (&#8220;Winter&#8221;, &#8220;Summer&#8221;, ...)</li>
+<li>Items axis:  Table type    (&#8220;dBA&#8221; and &#8220;dBT&#8221;; &#8220;night&#8221; and &#8220;day&#8221;; &#8220;l90&#8221;, &#8220;lnat&#8221;, and &#8220;l50&#8221;; ...)</li>
+<li>Major axis:  Table columns (&#8220;12.5Hz&#8221; to &#8220;20000Hz&#8221;; 0 to 23; &#8220;Lmin&#8221;, &#8220;L099&#8221;, &#8220;Lnat&#8221;, ...)</li>
+<li>Minor axis:  Table rows    (&#8220;L090&#8221;, &#8220;Lnat&#8221;, &#8220;L050&#8221;; &#8220;Day&#8221;, &#8220;Night&#8221;, &#8220;overall&#8221;; 0 to 23; 1.1, 1.2, 1.3, ...)</li>
+<li><strong>So these are accessed</strong> <code class="docutils literal"><span class="pre">data.loc[</span> <span class="pre">&lt;season&gt;,</span> <span class="pre">&lt;tableType&gt;,</span> <span class="pre">&lt;columns&gt;,</span> <span class="pre">&lt;rows&gt;</span> <span class="pre">]</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>For metrics composed of just one table:</dt>
+<dd><ul class="first last simple">
+<li>Items axis: Season        (&#8220;Winter&#8221;, &#8220;Summer&#8221;, ...)</li>
+<li>Major axis: Table columns (&#8220;12.5Hz&#8221; to &#8220;20000Hz&#8221;; 0 to 23; &#8220;Lmin&#8221;, &#8220;L099&#8221;, &#8220;Lnat&#8221;, ...)</li>
+<li>Minor axis: Table rows    (&#8220;L090&#8221;, &#8220;Lnat&#8221;, &#8220;L050&#8221;; &#8220;Day&#8221;, &#8220;Night&#8221;, &#8220;overall&#8221;; 0 to 23; 1.1, 1.2, 1.3, ...)</li>
+<li><strong>So these are accessed</strong> <code class="docutils literal"><span class="pre">data.loc[</span> <span class="pre">&lt;season&gt;,</span> <span class="pre">&lt;columns&gt;,</span> <span class="pre">&lt;rows&gt;</span> <span class="pre">]</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>And the <code class="docutils literal"><span class="pre">n</span></code> DataFrames or Series are indexed:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>For metrics composed of multiple tables (DataFrame):</dt>
+<dd><ul class="first last simple">
+<li>Columns: Season     (&#8220;Winter&#8221;, &#8220;Summer&#8221;, ...)</li>
+<li>Rows:    Table type (&#8220;dBA&#8221; and &#8220;dBT&#8221;; &#8220;night&#8221; and &#8220;day&#8221;; &#8220;l90&#8221;, &#8220;lnat&#8221;, and &#8220;l50&#8221;; ...)</li>
+<li><strong>So these are accessed</strong> <code class="docutils literal"><span class="pre">n.loc[</span> <span class="pre">&lt;season&gt;,</span> <span class="pre">&lt;tableType&gt;</span> <span class="pre">]</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>For metrics composed of just one table (Series):</dt>
+<dd><ul class="first last simple">
+<li>Rows: Season     (&#8220;Winter&#8221;, &#8220;Summer&#8221;, ...)</li>
+<li><strong>So these are accessed</strong> <code class="docutils literal"><span class="pre">n[</span> <span class="pre">&lt;season&gt;</span> <span class="pre">]</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Examples (where the object returned from this function is stored as <code class="docutils literal"><span class="pre">metrics</span></code>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt;&gt; metrics.noiseFreeInterval.data
+-&gt; a Panel of the SPLAT Noise Free Interval (sec) table for each season, indexed by [season, percentile, hour]
+
+&gt;&gt; metrics.noiseFreeInterval.n
+-&gt; a Series of the number of days used to compute the noise free interval metric, with one row per season
+
+&gt;&gt; metrics.hourlyMedian.data
+-&gt; a Panel4D of the Median Hourly Metrics tables for dBA and dBT for each season, indexed by [season, spl weighting, percentile, hour]
+
+&gt;&gt; metrics.hourlyMedian.data.Summer.dBA
+&gt;&gt; metrics.hourlyMedian.data.loc[&quot;Summer&quot;, &quot;dBA&quot;]
+-&gt; a DataFrame subselecting the dBA item from the Summer label in the Median Hourly Metrics panel
+-&gt; (essentially, just the original ``Median Hourly Metrics (dBA), Summer`` table in the metrics file)
+
+&gt;&gt; metrics.hourlyMedian.data.loc[&quot;Winter&quot;, :, &quot;Leq&quot;, 0:12]
+-&gt; a DataFrame of median Leq values from the hours 0-12 (rows) for both dBA and dBT (columns) in Winter
+
+&gt;&gt; metrics.hourlyMedian.data.loc[:, :, &quot;Leq&quot;, 0:12].mean(axis= &quot;items&quot;)
+-&gt; a DataFrame of the mean across all seasons of median Leq values from the hours 0-12 (columns) for both dBA and dBT (rows)
+</pre></div>
+</div>
+<p>Special Cases:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Hour axes have the <code class="docutils literal"><span class="pre">'h'</span></code> removed, so they are just integers 0-23.</li>
+<li>The <code class="docutils literal"><span class="pre">frequency</span></code>, <code class="docutils literal"><span class="pre">ambient</span></code>, and <code class="docutils literal"><span class="pre">percentTimeAbove</span></code> metrics have the additional row <code class="docutils literal"><span class="pre">&quot;overall&quot;</span></code>
+added along with <code class="docutils literal"><span class="pre">&quot;Day&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;Night&quot;</span></code>. This is the logarithmic mean SPL for both day and night.</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211;
+If the version of the file does not match the reader</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211;
+If the header cannot be parsed</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">OSError</span></code> &#8211;
+Unhandled&#8212;raised if the file is missing</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">soundDB</a></h1>
+
+
+
+<p class="blurb">Subselecting data from the NSNSD file structure since 2015.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">What you&#8217;ll use 90% of the time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accessor.html">The Accessor Class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Filetype-Specific Accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">Path &amp; Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Gabe Joseph.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+      |
+      <a href="_sources/filetypes.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>

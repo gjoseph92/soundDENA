@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Path &amp; Directory Structure &mdash; soundDB 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="soundDB 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="Metadata" href="metadata.html" />
+    <link rel="prev" title="Filetype-Specific Accessors" href="filetypes.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="metadata.html" title="Metadata"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="filetypes.html" title="Filetype-Specific Accessors"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">soundDB 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="path-directory-structure">
+<span id="paths"></span><h1>Path &amp; Directory Structure<a class="headerlink" href="#path-directory-structure" title="Permalink to this headline">¶</a></h1>
+<p>soundDB relies on the regularity of the NSNSD file structure and naming scheme to be able to locate file types across multiple sites. In order to be easily reconfigurable to future changes or different systems, however, the expected layout of this file structure is defined in just one place: the <code class="docutils literal"><span class="pre">paths</span></code> submodule. <code class="docutils literal"><span class="pre">soundDB.paths</span></code> defines many constants that specify where different directories can be found, as well as functions for mapping between site identifiers. Because the rest of the library only uses these methods and constants, never assuming the format of names or folders, adapting to a new naming convention only requires modifying simple code in this file.</p>
+<div class="section" id="terms-formats">
+<h2>Terms &amp; Formats<a class="headerlink" href="#terms-formats" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="22%" />
+<col width="27%" />
+<col width="15%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Term</th>
+<th class="head">Format</th>
+<th class="head">Example</th>
+<th class="head" colspan="2">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>unit</td>
+<td><code class="docutils literal"><span class="pre">AAAA</span></code></td>
+<td><code class="docutils literal"><span class="pre">DENA</span></code></td>
+<td colspan="2">Four-character alphanumeric code for the unit (park)
+of the site</td>
+</tr>
+<tr class="row-odd"><td>site</td>
+<td><code class="docutils literal"><span class="pre">AAAA</span></code></td>
+<td><code class="docutils literal"><span class="pre">FANG</span></code></td>
+<td colspan="2">Four-character alphanumeric code for the site itself</td>
+</tr>
+<tr class="row-even"><td>year</td>
+<td><code class="docutils literal"><span class="pre">9999</span></code></td>
+<td><code class="docutils literal"><span class="pre">2013</span></code></td>
+<td colspan="2">Four-character numeric code for the year of
+sampling of the site</td>
+</tr>
+<tr class="row-odd"><td>siteID</td>
+<td><code class="docutils literal"><span class="pre">UNITSITEYEAR</span></code></td>
+<td><code class="docutils literal"><span class="pre">DENAFANG2013</span></code></td>
+<td colspan="2">A string identifier for a unique sampling of data.
+siteID is used throughout soundDB as the standard way
+to identify and refer to a site across many contexts.</td>
+</tr>
+<tr class="row-even"><td>dataDir</td>
+<td><code class="docutils literal"><span class="pre">YEAR</span> <span class="pre">UNITSITE</span> <span class="pre">&lt;title&gt;</span></code></td>
+<td><code class="docutils literal"><span class="pre">2013</span> <span class="pre">DENAFANG</span> <span class="pre">Fang</span> <span class="pre">Mountain</span></code></td>
+<td colspan="2">The root directory containing raw and analyzed
+data for a particular site</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-soundDB.paths">
+<span id="name-formatting-methods"></span><h2>Name-Formatting Methods<a class="headerlink" href="#module-soundDB.paths" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="soundDB.paths.dataDir">
+<code class="descclassname">soundDB.paths.</code><code class="descname">dataDir</code><span class="sig-paren">(</span><em>unit</em>, <em>site</em>, <em>year</em>, <em>title=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/paths.html#dataDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.paths.dataDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats unit, site, year, and title into the name of a data directory (i.e. 2014 DENABACK Backside Lake)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="soundDB.paths.dataDirs">
+<code class="descclassname">soundDB.paths.</code><code class="descname">dataDirs</code><span class="sig-paren">(</span><em>sites</em>, <em>quiet=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/paths.html#dataDirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.paths.dataDirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator that returns paths to raw data directories corresponding to the given sites.</p>
+<p>Sites can be a pandas DataFrame or Series, in which case its index is used as the site IDs.
+Otherwise, an iterable or singleton string of site ID(s) also works. Paths are yielded in
+the same order the sites are given (though some may be missing if data is not available).</p>
+<p>Yields a tuple of (pathlib.Path, unit, site, year) for the directories that contian raw data for the sites.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="soundDB.paths.getDataDirPath">
+<code class="descclassname">soundDB.paths.</code><code class="descname">getDataDirPath</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/paths.html#getDataDirPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.paths.getDataDirPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a site ID string, or unit, site, and year, returns a pathlib.Path to
+that site&#8217;s data directory.</p>
+<p>Raises ValueError for invalid site identifiers, or IOError for non-existent sites.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="soundDB.paths.siteID">
+<code class="descclassname">soundDB.paths.</code><code class="descname">siteID</code><span class="sig-paren">(</span><em>unit</em>, <em>site</em>, <em>year</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/paths.html#siteID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.paths.siteID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats unit, site, and year into a site ID (UNITSITEYEAR, i.e. DENAUPST2015)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="soundDB.paths.splitDataDir">
+<code class="descclassname">soundDB.paths.</code><code class="descname">splitDataDir</code><span class="sig-paren">(</span><em>dataDir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/paths.html#splitDataDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.paths.splitDataDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a 4-tuple of unit, site, year, and title for a data directory (pathlib.Path, or string).
+Data directory names are formatted as: YEAR UNITSITE &lt;title&gt;, i.e. 2014 GAARNWAL North Walker Lake</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="soundDB.paths.splitSiteID">
+<code class="descclassname">soundDB.paths.</code><code class="descname">splitSiteID</code><span class="sig-paren">(</span><em>siteID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/paths.html#splitSiteID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.paths.splitSiteID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a 3-tuple of unit, site, and year for a site ID string.
+Site IDs are formatted as UNITSITEYEAR, i.e. DENAUPST2015</p>
+</dd></dl>
+
+</div>
+<div class="section" id="base-absolute-locations">
+<h2>Base Absolute Locations<a class="headerlink" href="#base-absolute-locations" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="soundDB.paths.t_analysis">
+<code class="descclassname">soundDB.paths.</code><code class="descname">t_analysis</code><em class="property"> = WindowsPath('T:/ResMgmt/WAGS/Sound/Analysis')</em><a class="headerlink" href="#soundDB.paths.t_analysis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.derivedData">
+<code class="descclassname">soundDB.paths.</code><code class="descname">derivedData</code><em class="property"> = WindowsPath('T:/ResMgmt/WAGS/Sound/Analysis/DENA Parkwide Derived Data 2015 09 15 T.xls')</em><a class="headerlink" href="#soundDB.paths.derivedData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.metadata">
+<code class="descclassname">soundDB.paths.</code><code class="descname">metadata</code><em class="property"> = WindowsPath('T:/ResMgmt/WAGS/Sound/Analysis/Complete_Metadata_AKR_2001-2015  T.xlsx')</em><a class="headerlink" href="#soundDB.paths.metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.rawdata">
+<code class="descclassname">soundDB.paths.</code><code class="descname">rawdata</code><em class="property"> = WindowsPath('E:/AKRO Soundscape Data')</em><a class="headerlink" href="#soundDB.paths.rawdata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="directory-structure-constants">
+<h2>Directory Structure Constants<a class="headerlink" href="#directory-structure-constants" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="soundDB.paths.data">
+<code class="descclassname">soundDB.paths.</code><code class="descname">data</code><em class="property"> = WindowsPath('01 DATA')</em><a class="headerlink" href="#soundDB.paths.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.nvspl">
+<code class="descclassname">soundDB.paths.</code><code class="descname">nvspl</code><em class="property"> = WindowsPath('01 DATA/NVSPL')</em><a class="headerlink" href="#soundDB.paths.nvspl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.audio">
+<code class="descclassname">soundDB.paths.</code><code class="descname">audio</code><em class="property"> = WindowsPath('01 DATA/AUDIO')</em><a class="headerlink" href="#soundDB.paths.audio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.photos">
+<code class="descclassname">soundDB.paths.</code><code class="descname">photos</code><em class="property"> = WindowsPath('01 DATA/PHOTOS')</em><a class="headerlink" href="#soundDB.paths.photos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.partial_nvspl">
+<code class="descclassname">soundDB.paths.</code><code class="descname">partial_nvspl</code><em class="property"> = WindowsPath('01 DATA/PartialDays_NVSPL')</em><a class="headerlink" href="#soundDB.paths.partial_nvspl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.analysis">
+<code class="descclassname">soundDB.paths.</code><code class="descname">analysis</code><em class="property"> = WindowsPath('02 ANALYSIS')</em><a class="headerlink" href="#soundDB.paths.analysis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.spl">
+<code class="descclassname">soundDB.paths.</code><code class="descname">spl</code><em class="property"> = WindowsPath('02 ANALYSIS/SPL Analysis')</em><a class="headerlink" href="#soundDB.paths.spl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.wav">
+<code class="descclassname">soundDB.paths.</code><code class="descname">wav</code><em class="property"> = WindowsPath('02 ANALYSIS/WAV Analysis')</em><a class="headerlink" href="#soundDB.paths.wav" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.computed">
+<code class="descclassname">soundDB.paths.</code><code class="descname">computed</code><em class="property"> = WindowsPath('02 ANALYSIS/Computational Outputs')</em><a class="headerlink" href="#soundDB.paths.computed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="soundDB.paths.microarray">
+<code class="descclassname">soundDB.paths.</code><code class="descname">microarray</code><em class="property"> = WindowsPath('02 ANALYSIS/WAV Analysis/Microarray')</em><a class="headerlink" href="#soundDB.paths.microarray" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">soundDB</a></h1>
+
+
+
+<p class="blurb">Subselecting data from the NSNSD file structure since 2015.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">What you&#8217;ll use 90% of the time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accessor.html">The Accessor Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filetypes.html">Filetype-Specific Accessors</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Path &amp; Directory Structure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#terms-formats">Terms &amp; Formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-soundDB.paths">Name-Formatting Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#base-absolute-locations">Base Absolute Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#directory-structure-constants">Directory Structure Constants</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Gabe Joseph.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+      |
+      <a href="_sources/paths.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>
