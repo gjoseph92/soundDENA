@@ -40,22 +40,21 @@ if [ ! -e $DOCDIR ]; then
 	exit
 fi
 
-mv $DOCDIR .$DOCDIR
+# mv $DOCDIR .$DOCDIR
 
 # like rm -rf *, but skip self
 echo "Cleaning working directory"
 for f in *
 do
-	echo $f
-	if [ "$f" != "$SELF" ]; then
+	if [ "$f" != "$SELF" -a "$f" != "$DOCDIR" ]; then
 		rm -rf $f
 	fi
 done
 
 echo "Copying $DOCDIR/_build/html/* to working directory"
-cp .$DOCDIR/_build/html/* .
+cp $DOCDIR/_build/html/* .
 git add --all .
-git reset HEAD .$DOCDIR
+git reset HEAD $DOCDIR
 git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
-mv .$DOCDIR $DOCDIR
+# mv .$DOCDIR $DOCDIR
 echo "Done!"
