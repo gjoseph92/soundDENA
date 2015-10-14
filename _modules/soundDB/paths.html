@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>soundDB.paths &mdash; soundDB 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="soundDB 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">soundDB 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for soundDB.paths</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pandas</span>
+
+<span class="c">###############</span>
+<span class="c">#### PATHS ####</span>
+<span class="c">###############</span>
+
+<span class="c">############</span>
+<span class="c">### Metadata</span>
+
+<span class="n">t_analysis</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s">&quot;T:/ResMgmt/WAGS/Sound/Analysis&quot;</span><span class="p">)</span>
+
+<span class="n">derivedData</span> <span class="o">=</span> <span class="n">t_analysis</span> <span class="o">/</span> <span class="s">&#39;DENA Parkwide Derived Data 2015 09 15 T.xls&#39;</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">t_analysis</span> <span class="o">/</span> <span class="s">&#39;Complete_Metadata_AKR_2001-2015  T.xlsx&#39;</span>
+
+<span class="c">############</span>
+<span class="c">### Raw data</span>
+
+<span class="n">rawdata</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s">&quot;E:/AKRO Soundscape Data&quot;</span><span class="p">)</span>
+
+<span class="c"># Each raw data folder&#39;s structure:</span>
+
+<span class="n">data</span>     <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span> <span class="s">&quot;01 DATA&quot;</span> <span class="p">)</span>
+
+<span class="n">nvspl</span>    <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="s">&quot;NVSPL&quot;</span>
+<span class="n">audio</span>    <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="s">&quot;AUDIO&quot;</span>
+<span class="n">photos</span>   <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="s">&quot;PHOTOS&quot;</span>
+<span class="n">partial_nvspl</span>  <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="s">&quot;PartialDays_NVSPL&quot;</span>
+<span class="n">processed_nvspl</span> <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="s">&quot;Processed_NVSPL&quot;</span>
+
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span> <span class="s">&quot;02 ANALYSIS&quot;</span> <span class="p">)</span>
+
+<span class="n">spl</span>      <span class="o">=</span> <span class="n">analysis</span> <span class="o">/</span> <span class="s">&quot;SPL Analysis&quot;</span>
+<span class="n">wav</span>      <span class="o">=</span> <span class="n">analysis</span> <span class="o">/</span> <span class="s">&quot;WAV Analysis&quot;</span>
+<span class="n">computed</span> <span class="o">=</span> <span class="n">analysis</span> <span class="o">/</span> <span class="s">&quot;Computational Outputs&quot;</span>
+
+<span class="n">microarray</span> <span class="o">=</span> <span class="n">wav</span> <span class="o">/</span> <span class="s">&quot;Microarray&quot;</span>
+
+<span class="c">#################</span>
+<span class="c">#### METHODS ####</span>
+<span class="c">#################</span>
+
+<span class="n">_siteID_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^([\w\d]{4})([\w\d]{4})(\d{4})$&quot;</span><span class="p">)</span>
+<span class="n">_dataDir_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^(\d{4}) ([\w\d]{4})([\w\d]{4}) (.*)&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="splitSiteID"><a class="viewcode-back" href="../../paths.html#soundDB.paths.splitSiteID">[docs]</a><span class="k">def</span> <span class="nf">splitSiteID</span><span class="p">(</span><span class="n">siteID</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a 3-tuple of unit, site, and year for a site ID string.</span>
+<span class="sd">    Site IDs are formatted as UNITSITEYEAR, i.e. DENAUPST2015</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_siteID_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">siteID</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid site ID: &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">siteID</span><span class="p">))</span></div>
+<div class="viewcode-block" id="siteID"><a class="viewcode-back" href="../../paths.html#soundDB.paths.siteID">[docs]</a><span class="k">def</span> <span class="nf">siteID</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formats unit, site, and year into a site ID (UNITSITEYEAR, i.e. DENAUPST2015)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">unit</span><span class="o">+</span><span class="n">site</span><span class="o">+</span><span class="n">year</span>
+</div>
+<div class="viewcode-block" id="splitDataDir"><a class="viewcode-back" href="../../paths.html#soundDB.paths.splitDataDir">[docs]</a><span class="k">def</span> <span class="nf">splitDataDir</span><span class="p">(</span><span class="n">dataDir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a 4-tuple of unit, site, year, and title for a data directory (pathlib.Path, or string).</span>
+<span class="sd">    Data directory names are formatted as: YEAR UNITSITE &lt;title&gt;, i.e. 2014 GAARNWAL North Walker Lake</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataDir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">dataDir</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_dataDir_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">dataDir</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">year</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid data dir name: &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataDir</span><span class="p">))</span></div>
+<div class="viewcode-block" id="dataDir"><a class="viewcode-back" href="../../paths.html#soundDB.paths.dataDir">[docs]</a><span class="k">def</span> <span class="nf">dataDir</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formats unit, site, year, and title into the name of a data directory (i.e. 2014 DENABACK Backside Lake)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&quot;{} {}{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+
+<span class="c">## Make lookup dict of all data dirs immediately upon import</span></div>
+<span class="n">_allDataDirs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">def</span> <span class="nf">_buildDataDirLookup</span><span class="p">(</span><span class="n">newRawData</span><span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">rawdata</span>
+    <span class="k">if</span> <span class="n">newRawData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">rawdata</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">newRawData</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">dataDir</span> <span class="ow">in</span> <span class="n">rawdata</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="n">splitDataDir</span><span class="p">(</span><span class="n">dataDir</span><span class="p">)</span>
+                <span class="n">_allDataDirs</span><span class="p">[(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dataDir</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_allDataDirs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;No site data directories found in {}. Check if this is really the correct path to the raw data directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rawdata</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;Raw data directory &quot;{}&quot; not found (the drive may be disconnected). Most data-accessing functions will raise exceptions.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rawdata</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;Permission denied to access data directory &quot;{}&quot;. Most data-accessing functions will raise exceptions.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rawdata</span><span class="p">)))</span>
+<span class="n">_buildDataDirLookup</span><span class="p">()</span>
+
+<div class="viewcode-block" id="getDataDirPath"><a class="viewcode-back" href="../../paths.html#soundDB.paths.getDataDirPath">[docs]</a><span class="k">def</span> <span class="nf">getDataDirPath</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a site ID string, or unit, site, and year, returns a pathlib.Path to</span>
+<span class="sd">    that site&#39;s data directory.</span>
+
+<span class="sd">    Raises ValueError for invalid site identifiers, or IOError for non-existent sites.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c"># site ID string</span>
+        <span class="n">split</span> <span class="o">=</span> <span class="n">splitSiteID</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="c"># unit, site, year</span>
+        <span class="n">split</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;getDataDirPath() takes either a site ID string or unit, site, year - got {} arguments&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_allDataDirs</span><span class="p">[</span><span class="n">split</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;No data directory found for {}{} in {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">split</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="dataDirs"><a class="viewcode-back" href="../../paths.html#soundDB.paths.dataDirs">[docs]</a><span class="k">def</span> <span class="nf">dataDirs</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generator that returns paths to raw data directories corresponding to the given sites.</span>
+
+<span class="sd">    Sites can be a pandas DataFrame or Series, in which case its index is used as the site IDs.</span>
+<span class="sd">    Otherwise, an iterable or singleton string of site ID(s) also works. Paths are yielded in</span>
+<span class="sd">    the same order the sites are given (though some may be missing if data is not available).</span>
+
+<span class="sd">    Yields a tuple of (pathlib.Path, unit, site, year) for the directories that contian raw data for the sites.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">NDFrame</span><span class="p">):</span>
+        <span class="c">## If given a dataframe, use its index as site ids</span>
+        <span class="n">siteIDs</span> <span class="o">=</span> <span class="n">sites</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c">## Singleton strings (just one site) can be used too</span>
+        <span class="n">siteIDs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sites</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">siteIDs</span> <span class="o">=</span> <span class="n">sites</span>
+
+    <span class="c">## Check format of siteIDs (UNITSITEYEAR)</span>
+    <span class="n">splitIDs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">invalidIDs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">siteID</span> <span class="ow">in</span> <span class="n">siteIDs</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">split</span> <span class="o">=</span> <span class="n">splitSiteID</span><span class="p">(</span><span class="n">siteID</span><span class="p">)</span>
+            <span class="n">splitIDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">invalidIDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">siteID</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalidIDs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s">&quot;Invalid site IDs given: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">invalidIDs</span><span class="p">))</span>
+    <span class="c">## Yield corresponding directories</span>
+    <span class="k">for</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">splitIDs</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dataDir</span> <span class="o">=</span> <span class="n">_allDataDirs</span><span class="p">[(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">)]</span>
+            <span class="k">yield</span> <span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span> <span class="s">&quot;No data available on the raw data drive for {}{} in {}, skipping&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span> <span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">soundDB</a></h1>
+
+
+
+<p class="blurb">Subselecting data from the NSNSD file structure since 2015.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">What you&#8217;ll use 90% of the time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../accessor.html">The Accessor Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filetypes.html">Filetype-Specific Accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../paths.html">Path &amp; Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metadata.html">Metadata</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Gabe Joseph.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

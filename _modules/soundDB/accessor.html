@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>soundDB.accessor &mdash; soundDB 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="soundDB 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">soundDB 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for soundDB.accessor</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">paths</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<div class="viewcode-block" id="Accessor"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor">[docs]</a><span class="k">class</span> <span class="nc">Accessor</span><span class="p">:</span>
+<div class="viewcode-block" id="Accessor.__init__"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parserFunc</span><span class="p">,</span> <span class="n">pathToData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate an Accessor for a specific filetype by giving a function</span>
+<span class="sd">        to parse that kind of file, and where that file is located.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parserFunc : function</span>
+<span class="sd">            A function which, given the path(s) to a file,</span>
+<span class="sd">            parses and returns the data. This overrides the</span>
+<span class="sd">            :meth:`parse` method of the instance.</span>
+<span class="sd">        pathToData : str, pathlib.Path, or function</span>
+<span class="sd">            Where to find the filetype in a site&#39;s :ref:`data directory &lt;dataDir&gt;`</span>
+
+
+<span class="sd">        The docstring of ``parserFunc`` also will become the docstring of the Accessor instance.</span>
+
+<span class="sd">        If **pathToData** is a string or pathlib.Path, it should be the path to this</span>
+<span class="sd">        filetype *relative* to a :ref:`data directory &lt;dataDir&gt;`. The path can look like a</span>
+<span class="sd">        Python format string that takes the keyword arguments ``unit``, ``site``, and ``year``.</span>
+<span class="sd">        If the path contains a ``*`` character, it will also be passed to ``glob``,</span>
+<span class="sd">        and the resulting list will be converted to pathlib.Paths and returned.</span>
+<span class="sd">        (In this case, the ``parserFunc`` should also expect a list of paths.)</span>
+
+<span class="sd">        Examples for ``pathToData``:</span>
+
+<span class="sd">            * ``&quot;01 DATA/PHOTOS/CardinalPhotoComposite_{unit}{site}.jpg&quot;``</span>
+<span class="sd">            * ``soundDB.paths.spl / &quot;SRCID_{unit}{site}.txt&quot;``</span>
+<span class="sd">            * ``soundDB.paths.nvspl / &quot;NVSPL_{unit}{site}*.txt&quot;``</span>
+
+<span class="sd">        If **pathToData** is a function, it should take the details of a specific site</span>
+<span class="sd">        and return the path to the file(s) within that site, with this signature:</span>
+
+<span class="sd">        .. function:: pathToData(dataDir, unit, site, year, **kwargs)</span>
+
+<span class="sd">            :param pathlib.Path dataDir: The root data directory for a site</span>
+<span class="sd">            :param str unit: Unit of the site</span>
+<span class="sd">            :param str site: Site code of the site</span>
+<span class="sd">            :param str year: Year of the site</span>
+<span class="sd">            :param kwargs: Any keyword arguments related to path selection.</span>
+<span class="sd">                           The same keyword arguments will be given to both **pathToData**</span>
+<span class="sd">                           and **parserFunc**, so they should both be able to handle unexpected</span>
+<span class="sd">                           keyword arguments by having **kwargs as the last item in their</span>
+<span class="sd">                           argument lists.</span>
+
+<span class="sd">            :return: Varies; the result is passed directly to ``parserFunc``.</span>
+<span class="sd">                     Often, a pathlib.Path or list of pathlib.Path to the file(s)</span>
+<span class="sd">                     to be parsed within the specific site&#39;s data directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse</span> <span class="o">=</span> <span class="n">parserFunc</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pathToData</span><span class="p">,</span> <span class="s">&quot;__call__&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span> <span class="o">=</span> <span class="n">pathToData</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pathToData</span> <span class="o">=</span> <span class="n">pathToData</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">__doc__</span>
+</div>
+<div class="viewcode-block" id="Accessor.__call__"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterate site-by-site over a type of data.</span>
+
+<span class="sd">        Data is yielded in the same order as the given sites,</span>
+<span class="sd">        though some sites may be missing if they lack data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sites : iterable</span>
+<span class="sd">            :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`</span>
+<span class="sd">        quiet : boolean, optional</span>
+<span class="sd">            Whether to not print info about any errors that occur</span>
+<span class="sd">        kwargs</span>
+<span class="sd">            Any keyword arguments specific to this filetype&#39;s :meth:`parse` or ``pathToData`` function</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        data : varies</span>
+<span class="sd">            Data from each site in the format returned by :meth:`parse`</span>
+<span class="sd">        unit : str</span>
+<span class="sd">        site : str</span>
+<span class="sd">        year : str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">## TODO: progress bar?</span>
+        <span class="k">for</span> <span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">dataDirs</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="n">quiet</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">access</span><span class="p">((</span><span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">data</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span>
+            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;*** KeyboardInterrupt: halting execution ***&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span> <span class="n">e</span> <span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="c"># TODO: clearer error handling</span>
+                <span class="c"># print( _sys.exc_info()[0] )</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span> <span class="s">&quot;Error when processing {}:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataDir</span><span class="p">)</span> <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span> <span class="p">)</span>
+                <span class="k">continue</span>
+</div>
+<div class="viewcode-block" id="Accessor.all"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read data from all specified sites into a single DataFrame or dict.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sites : iterable</span>
+<span class="sd">            :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`</span>
+<span class="sd">        quiet : boolean, optional</span>
+<span class="sd">            Whether to not print info about any errors that occur</span>
+<span class="sd">        kwargs</span>
+<span class="sd">            Any keyword arguments specific to this filetype&#39;s :meth:`parse` or ``pathToData`` function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        NDFrame or dict</span>
+<span class="sd">            If :meth:`parse` retuns a pandas NDFrame for each site, all sites will be</span>
+<span class="sd">            concatenated into one NDFrame, with :ref:`siteID` as outermost level of hierarchical index.</span>
+<span class="sd">            Otherwise, returns a dict of ``{ siteID: data }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span> <span class="n">paths</span><span class="o">.</span><span class="n">siteID</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span> <span class="n">data</span> <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="n">quiet</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">joined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">joined</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="s">&#39;siteID&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">return</span> <span class="n">joined</span>
+
+            <span class="c"># TODO: do a better job than concat by promoting to next-dimensionality data structure</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">results</span>
+</div>
+<div class="viewcode-block" id="Accessor.paths"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.paths">[docs]</a>    <span class="k">def</span> <span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterate site-by-site over the paths to this sort of data file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sites : iterable of str, or NDFrame</span>
+<span class="sd">            :ref:`siteID` strings, or a pandas structure indexed by :ref:`siteID`</span>
+<span class="sd">        kwargs</span>
+<span class="sd">            Any keyword arguments specific to this filetype&#39;s ``pathToData`` function</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        path : (list of) pathlib.Path</span>
+<span class="sd">            Path(s) to the data file(s) for the site</span>
+<span class="sd">        unit : str</span>
+<span class="sd">        site : str</span>
+<span class="sd">        year : str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">dataDirs</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="n">quiet</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="p">(</span><span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="k">continue</span>
+</div>
+<div class="viewcode-block" id="Accessor.access"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.access">[docs]</a>    <span class="k">def</span> <span class="nf">access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read data from one site.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        site</span>
+<span class="sd">            A single site or data directory specifier:</span>
+
+<span class="sd">                * :ref:`siteID` string</span>
+<span class="sd">                * pathlib.Path to a :ref:`data directory &lt;dataDir&gt;`</span>
+<span class="sd">                * tuple of (unit, site, year) (all strings)</span>
+<span class="sd">                * tuple of (dataDir, unit, site, year) (all strings, dataDir as pathlib.Path)</span>
+<span class="sd">        kwargs</span>
+<span class="sd">            Any keyword arguments specific to this filetype&#39;s :meth:`parse` or ``pathToData`` function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        varies</span>
+<span class="sd">            The result of the instance&#39;s :meth:`parse` function (typically a pandas DataFrame or Panel)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">site</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="o">=</span> <span class="n">site</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">site</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="o">=</span> <span class="n">site</span>
+                <span class="n">dataDir</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">getDataDirPath</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Wrong tuple length for site specification {}: if a tuple, site should be (unit, site, year), or (dataDir, unit, site, year)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">site</span><span class="p">))</span>      
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+            <span class="n">dataDir</span> <span class="o">=</span> <span class="n">site</span>
+            <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">splitDataDir</span><span class="p">(</span><span class="n">dataDir</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">splitSiteID</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+            <span class="n">dataDir</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">getDataDirPath</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Unknown site specification {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">site</span><span class="p">))</span>
+
+        <span class="n">filePath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filepath</span><span class="p">(</span><span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Accessor.parse"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse data from disk located at filepath.</span>
+<span class="sd">        This method is overridden in each instance by passing a parse function</span>
+<span class="sd">        into :meth:`__init__`.</span>
+
+<span class="sd">        All parse functions should have this signature:</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filepath : pathlib.Path, or iterable of pathlib.Path</span>
+<span class="sd">            The path(s) from which to read data</span>
+<span class="sd">        kwargs</span>
+<span class="sd">            Any keyword arguments specific to reading this filetype</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        varies</span>
+<span class="sd">            Depends on what type of data is read. Typically, a pandas NDFrame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_filepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataDir</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the path (or list of paths) to the data file(s) for the given site of this type.</span>
+<span class="sd">        This method can be overridden in an instance by passing a function as ``pathToData``</span>
+<span class="sd">        in :meth:``__init__``.</span>
+
+<span class="sd">        Otherwise, the default implementation fills in ``self.pathToData`` as a template.</span>
+<span class="sd">        ``pathToData`` (passed in :meth:`__init__`) can be a pathlib.Path that looks like a</span>
+<span class="sd">        Python format string, i.e. ``soundDB.paths.spl / &quot;SRCID_{unit}{site}.txt&quot;``.</span>
+<span class="sd">        It is formatted with keyword arguments for unit, site, and year,</span>
+<span class="sd">        and joined onto the root data directory for the site.</span>
+<span class="sd">        If the path contains a ``*`` character, it will be passed to ``glob``,</span>
+<span class="sd">        and the resulting list will be converted to pathlib.Paths and returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">specificPathToData</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pathToData</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span> <span class="n">year</span><span class="p">)</span>
+        <span class="n">pathForReader</span> <span class="o">=</span> <span class="n">dataDir</span> <span class="o">/</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">specificPathToData</span><span class="p">)</span>
+
+        <span class="n">strPath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathForReader</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;*&quot;</span> <span class="ow">in</span> <span class="n">strPath</span><span class="p">:</span>
+            <span class="n">pathsForReader</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">strPath</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">pathsForReader</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pathForReader</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;{} does not exist.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pathForReader</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">pathForReader</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">soundDB</a></h1>
+
+
+
+<p class="blurb">Subselecting data from the NSNSD file structure since 2015.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">What you&#8217;ll use 90% of the time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../accessor.html">The Accessor Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filetypes.html">Filetype-Specific Accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../paths.html">Path &amp; Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metadata.html">Metadata</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Gabe Joseph.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

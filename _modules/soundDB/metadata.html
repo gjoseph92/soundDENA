@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>soundDB.metadata &mdash; soundDB 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="soundDB 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">soundDB 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for soundDB.metadata</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">paths</span>
+
+
+<span class="c"># TODO: save the result, and recompute it only when its date modified is older than the</span>
+<span class="c"># date modified of metadata or derived data</span>
+<div class="viewcode-block" id="fullMetadata"><a class="viewcode-back" href="../../metadata.html#soundDB.fullMetadata">[docs]</a><span class="k">def</span> <span class="nf">fullMetadata</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a DataFrame of metadata merged with derived data, with overlapping</span>
+<span class="sd">    columns resolved. Some column names and values are changed for consistency.</span>
+
+<span class="sd">    Transformations:</span>
+
+<span class="sd">        * ``unit`` column refers to ``Park`` from Derived Data and ``unit`` from Metadata</span>
+<span class="sd">        * ``code`` column is renamed to ``site`` (the 4-character site code)</span>
+<span class="sd">        * ``site`` column is renamed to ``title``</span>
+<span class="sd">        * All column names are lowercased</span>
+<span class="sd">        * In overlapping columns, values from Metadata are used</span>
+<span class="sd">          where values from both Metadata and Derived Data exist</span>
+<span class="sd">        * Leading and trailing whitespace is stripped from all string values</span>
+<span class="sd">        * Columns that contain only the values 0 and 1 are assumed to be boolean,</span>
+<span class="sd">          and converted to a boolean datatype</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Indexed by siteID (the 12-character code of UNITSITEYEAR, i.e. DENAUPST2015)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">derivedData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">paths</span><span class="o">.</span><span class="n">derivedData</span><span class="p">))</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">paths</span><span class="o">.</span><span class="n">metadata</span><span class="p">))</span>
+    <span class="n">derivedData</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">derivedData</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">derivedData</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span> <span class="p">{</span><span class="s">&quot;park&quot;</span><span class="p">:</span> <span class="s">&quot;unit&quot;</span><span class="p">,</span> <span class="s">&quot;code&quot;</span><span class="p">:</span> <span class="s">&quot;site&quot;</span><span class="p">,</span> <span class="s">&quot;site&quot;</span><span class="p">:</span> <span class="s">&quot;title&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span> <span class="p">{</span><span class="s">&quot;code&quot;</span><span class="p">:</span> <span class="s">&quot;site&quot;</span><span class="p">,</span> <span class="s">&quot;site&quot;</span><span class="p">:</span> <span class="s">&quot;title&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+
+    <span class="c"># Strip whitespace from string columns</span>
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">[</span><span class="n">metadata</span><span class="p">,</span> <span class="n">derivedData</span><span class="p">]:</span>
+        <span class="n">stringCols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">stringCols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">stringCols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+    <span class="n">full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">derivedData</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;unit&#39;</span><span class="p">,</span> <span class="s">&#39;site&#39;</span><span class="p">,</span> <span class="s">&#39;year&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span> <span class="s">&quot;outer&quot;</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span> <span class="p">(</span><span class="s">&quot;_meta&quot;</span><span class="p">,</span> <span class="s">&quot;_derived&quot;</span><span class="p">))</span>
+    
+    <span class="c"># Resolve overlapping columns, tie goes to metadata</span>
+    <span class="n">dupCols</span> <span class="o">=</span> <span class="n">derivedData</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">([</span><span class="s">&#39;unit&#39;</span><span class="p">,</span> <span class="s">&#39;site&#39;</span><span class="p">,</span> <span class="s">&#39;year&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dupCols</span><span class="p">:</span>
+        <span class="n">full</span><span class="p">[</span><span class="n">col</span><span class="o">+</span><span class="s">&quot;_meta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">to_replace</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">full</span><span class="p">[</span><span class="n">col</span><span class="o">+</span><span class="s">&quot;_derived&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">full</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="o">+</span><span class="s">&quot;_meta&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">full</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="o">+</span><span class="s">&quot;_derived&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c"># Set index to siteIDs</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">site</span><span class="p">:</span> <span class="n">paths</span><span class="o">.</span><span class="n">siteID</span><span class="p">(</span><span class="n">site</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="o">.</span><span class="n">site</span><span class="p">,</span> <span class="n">site</span><span class="o">.</span><span class="n">year</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">full</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">ids</span>
+
+    <span class="c"># Convert boolean-looking columns to boolean datatype</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">full</span><span class="p">:</span>
+        <span class="n">unique</span> <span class="o">=</span> <span class="n">full</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">unique</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="n">unique</span><span class="p">[</span> <span class="o">~</span><span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">unique</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">}:</span>
+                <span class="n">full</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">full</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="c"># full.winter_site = full.winter_site.astype(bool)</span>
+
+    <span class="k">return</span> <span class="n">full</span>
+</div>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">fullMetadata</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">soundDB</a></h1>
+
+
+
+<p class="blurb">Subselecting data from the NSNSD file structure since 2015.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">What you&#8217;ll use 90% of the time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../accessor.html">The Accessor Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filetypes.html">Filetype-Specific Accessors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../paths.html">Path &amp; Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metadata.html">Metadata</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Gabe Joseph.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
