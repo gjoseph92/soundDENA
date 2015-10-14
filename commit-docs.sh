@@ -31,6 +31,9 @@
 ## $ git checkout master
 
 # Change this to the name of your documentation directory (doc, docs, etc.)
+
+set -e
+
 DOCDIR="doc"
 
 SELF=`basename "$0"`
