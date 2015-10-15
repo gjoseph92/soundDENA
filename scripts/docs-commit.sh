@@ -15,7 +15,7 @@
 ## $ git checkout --orphan gh-pages
 ## $ rm -rf *       # you want a clean start for gh-pages
 ## $ rm .gitignore  # if it exists
-## [add this script]
+## [add this script to a scrips directory]
 ## $ touch .nojekyll
 ## $ git add .
 ## $ git commit -m "Initial gh-pages commit"
@@ -27,7 +27,7 @@
 ## When you're satisfied, commit or stash any changes in master. (Remember, `doc/_build` should not be tracked.)
 ## cd to the root of the repo
 ## $ git checkout gh-pages
-## $ ./commit-docs.sh
+## $ scrips/docs-commit.sh
 ## $ git checkout master
 
 # Change this to the name of your documentation directory (doc, docs, etc.)
@@ -36,7 +36,12 @@ set -e
 
 DOCDIR="doc"
 
-SELF=`basename "$0"`
+
+SCRIPTS=$(basename $(dirname $0))
+if [[ $SCRIPTS == "." ]]; then
+	echo "Please run from the root of the repository, i.e. scripts/$(basename $0)"
+	exit 1
+fi
 
 if [ ! -e $DOCDIR ]; then
 	echo "$DOCDIR does not exist. Go back to master and build yourself some docs!"
@@ -49,7 +54,7 @@ fi
 echo "Cleaning working directory"
 for f in *
 do
-	if [ "$f" != "$SELF" -a "$f" != "$DOCDIR" ]; then
+	if [ "$f" != "$SCRIPTS" -a "$f" != "$DOCDIR" ]; then
 		rm -rf $f
 	fi
 done
