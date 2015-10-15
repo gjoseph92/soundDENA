@@ -49,6 +49,7 @@ Contents:
    filetypes
    paths
    metadata
+   installation
 
 
 .. Indices and tables
