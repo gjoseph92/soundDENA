@@ -15,8 +15,9 @@
 ## $ git checkout --orphan gh-pages
 ## $ rm -rf *       # you want a clean start for gh-pages
 ## $ rm .gitignore  # if it exists
-## [add this script to a scrips directory]
+## [add this script to a scrips directory and set the name for DOCDIR in it]
 ## $ touch .nojekyll
+## $ echo "doc" > .gitignore   # we want to ignore the docs directory so it's never touched by git
 ## $ git add .
 ## $ git commit -m "Initial gh-pages commit"
 ##
