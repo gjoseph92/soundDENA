@@ -1,11 +1,11 @@
-.. currentmodule:: soundDB
+.. currentmodule:: soundDENA
 
 .. ipython:: python
    :suppress:
 
    import numpy as np
    import pandas as pd
-   import soundDB
+   import soundDENA
    np.set_printoptions(precision=4, suppress=True)
    pd.options.display.max_rows = 8
    pd.options.display.max_columns = 3
@@ -19,17 +19,17 @@ What you'll use 90% of the time
 Reading Data
 ============
 
-The soundDB module has an attribute for each type of file it can access---for example, ``soundDB.nvspl``, ``soundDB.srcid``, and ``soundDB.metrics``. These are all instances of the class :class:`~soundDB.Accessor`. (For the full list of supported files, see :ref:`Filetype Accessors <filetypes>`.) There are several ways to use the Accessor class, but the most common are:
+The soundDENA module has an attribute for each type of file it can access---for example, ``soundDENA.nvspl``, ``soundDENA.srcid``, and ``soundDENA.metrics``. These are all instances of the class :class:`~soundDENA.Accessor`. (For the full list of supported files, see :ref:`Filetype Accessors <filetypes>`.) There are several ways to use the Accessor class, but the most common are:
 
-.. function:: soundDB.<filetype>(sites)
+.. function:: soundDENA.<filetype>(sites)
    
-    Returns an iterator over the data for each site. The iterator yields a tuple of ``(data, unit, site, year)``, where ``data`` is usually a pandas DataFrame or Panel. :meth:`See full documentation <soundDB.Accessor.__call__>`.
+    Returns an iterator over the data for each site. The iterator yields a tuple of ``(data, unit, site, year)``, where ``data`` is usually a pandas DataFrame or Panel. :meth:`See full documentation <soundDENA.Accessor.__call__>`.
 
     .. ipython:: python
 
         props = jets = 0
         denaliSites = ["DENAKAHP2010", "DENAWEBU2009", "DENAUKAH2011"]
-        for srcid, unit, site, year in soundDB.srcid(denaliSites):
+        for srcid, unit, site, year in soundDENA.srcid(denaliSites):
             jets += len( srcid[ srcid.srcID == 1.1 ] )
             props += len( srcid[ srcid.srcID == 1.2 ] )
 
@@ -40,19 +40,19 @@ The soundDB module has an attribute for each type of file it can access---for ex
 
         .. ipython:: python
 
-            for metrics, unit, site, year in soundDB.metrics(["DENAFANG2013", "DENAKAHP2010", "DENAWEBU2009"]):
+            for metrics, unit, site, year in soundDENA.metrics(["DENAFANG2013", "DENAKAHP2010", "DENAWEBU2009"]):
                 summer_lnat = metrics.ambient.data.loc["Summer", "dBA", "Lnat", "overall"]
                 hours = metrics.ambient.n.loc["Summer", "dBA"]
                 print("{} {} summer L_nat: {} ({} hours)".format(year, site, summer_lnat, hours))
 
-.. function:: soundDB.<filetype>.all(sites)
+.. function:: soundDENA.<filetype>.all(sites)
 
-    Returns data from all the sites concatenated into a single object, typically a pandas DataFrame or Panel. :meth:`See full documentation <soundDB.Accessor.all>`.
+    Returns data from all the sites concatenated into a single object, typically a pandas DataFrame or Panel. :meth:`See full documentation <soundDENA.Accessor.all>`.
 
     .. ipython:: python
 
         denaliSites = ["DENAKAHP2010", "DENAWEBU2009", "DENAUKAH2011"]
-        srcids = soundDB.srcid.all(denaliSites)
+        srcids = soundDENA.srcid.all(denaliSites)
         jets = len( srcids[ srcids.srcID == 1.1 ] )
         props = len( srcids[ srcids.srcID == 1.2 ] )
 
@@ -60,18 +60,18 @@ The soundDB module has an attribute for each type of file it can access---for ex
         props / jets
 
 
-.. function:: soundDB.<filetype>.paths(sites)
+.. function:: soundDENA.<filetype>.paths(sites)
 
-     Returns an iterator over the paths to the data files for each site. :meth:`See full documentation <soundDB.Accessor.paths>`.
+     Returns an iterator over the paths to the data files for each site. :meth:`See full documentation <soundDENA.Accessor.paths>`.
 
      .. ipython:: python
 
         denaliSites = ["DENAKAHP2010", "DENAWEBU2009", "DENAUKAH2011"]
-        for path, unit, site, year in soundDB.srcid.paths(denaliSites):
+        for path, unit, site, year in soundDENA.srcid.paths(denaliSites):
             print(site, year, path)
 
 
-In all cases, the parameter **sites** is an iterable of :ref:`siteID`\ s. It could be as simple as ``["DENAFANG2013", "DENACARB2013", "DENAPAIN2014"]``, but it can also be a pandas DataFrame or Series whose *index* is the :ref:`siteID`\ s you want. So most commonly, you'll use a subselection from the :attr:`~soundDB.metadata.metadata` DataFrame, like ``soundDB.metadata.query("unit == 'DENA' and type == 'grid'")``.
+In all cases, the parameter **sites** is an iterable of :ref:`siteID`\ s. It could be as simple as ``["DENAFANG2013", "DENACARB2013", "DENAPAIN2014"]``, but it can also be a pandas DataFrame or Series whose *index* is the :ref:`siteID`\ s you want. So most commonly, you'll use a subselection from the :attr:`~soundDENA.metadata.metadata` DataFrame, like ``soundDENA.metadata.query("unit == 'DENA' and type == 'grid'")``.
 
 .. note::
 
@@ -83,24 +83,24 @@ In all cases, the parameter **sites** is an iterable of :ref:`siteID`\ s. It cou
 Selecting Sites
 ===============
 
-Using a list of :ref:`siteID` strings gets tedious---usually, you want data from sites that meet some criteria, like season, elevation, year, or park. This sort of metadata is found in the :attr:`Complete Metadata <soundDB.paths.metadata>` and :attr:`Derived Data <soundDB.paths.derivedData>` workbooks, so when you import soundDB, it loads both into a single pandas DataFrame, accessible as :attr:`soundDB.metadata <soundDB.metadata.metadata>`. You can then sub-select sites using criteria such as ``unit``, ``winter_site``, ``elevation``, etc. :attr:`soundDB.metadata <soundDB.metadata.metadata>`'s row indicies are :ref:`siteID`\ s, so you can use it as a site specifier for an :class:`~soundDB.Accessor`.
+Using a list of :ref:`siteID` strings gets tedious---usually, you want data from sites that meet some criteria, like season, elevation, year, or park. This sort of metadata is found in the :attr:`Complete Metadata <soundDENA.paths.metadata>` and :attr:`Derived Data <soundDENA.paths.derivedData>` workbooks, so when you import soundDENA, it loads both into a single pandas DataFrame, accessible as :attr:`soundDENA.metadata <soundDENA.metadata.metadata>`. You can then sub-select sites using criteria such as ``unit``, ``winter_site``, ``elevation``, etc. :attr:`soundDENA.metadata <soundDENA.metadata.metadata>`'s row indicies are :ref:`siteID`\ s, so you can use it as a site specifier for an :class:`~soundDENA.Accessor`.
 
 .. ipython:: python
 
-    import soundDB
-    soundDB.metadata
-    soundDB.metadata.columns
-    soundDB.metadata.index
+    import soundDENA
+    soundDENA.metadata
+    soundDENA.metadata.columns
+    soundDENA.metadata.index
 
 Putting It Together
 ===================
 
-By using a subselection of :attr:`soundDB.metadata <soundDB.metadata.metadata>` as the site specifier for an :class:`~soundDB.Accessor`, you can read the type of data you want from just certain sites that meet a criterion:
+By using a subselection of :attr:`soundDENA.metadata <soundDENA.metadata.metadata>` as the site specifier for an :class:`~soundDENA.Accessor`, you can read the type of data you want from just certain sites that meet a criterion:
 
 .. todo:: More explanation
 
 .. ipython:: python
     
-    highDena = soundDB.metadata.query("unit == 'DENA' and elevation > 2000 and not winter_site")
+    highDena = soundDENA.metadata.query("unit == 'DENA' and elevation > 2000 and not winter_site")
     highDena
-    soundDB.srcid.all(highDena)
+    soundDENA.srcid.all(highDena)

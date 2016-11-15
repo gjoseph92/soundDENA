@@ -138,7 +138,7 @@ def nvsplPaths(dataDir, unit, site, year, processed= True, partialDays= False, *
     list of pathlib.Path
         Paths to all NVSPL files for this site
 
-    This function follows the signature for ``pathToData()`` as defined in :meth:`soundDB.Accessor.__init__`.
+    This function follows the signature for ``pathToData()`` as defined in :meth:`soundDENA.Accessor.__init__`.
     """
     globPattern = "NVSPL_{}{}*.txt".format(unit, site)
 

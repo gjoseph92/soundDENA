@@ -34,8 +34,8 @@ class Accessor:
         Examples for ``pathToData``:
 
             * ``"01 DATA/PHOTOS/CardinalPhotoComposite_{unit}{site}.jpg"``
-            * ``soundDB.paths.spl / "SRCID_{unit}{site}.txt"``
-            * ``soundDB.paths.nvspl / "NVSPL_{unit}{site}*.txt"``
+            * ``soundDENA.paths.spl / "SRCID_{unit}{site}.txt"``
+            * ``soundDENA.paths.nvspl / "NVSPL_{unit}{site}*.txt"``
 
         If **pathToData** is a function, it should take the details of a specific site
         and return the path to the file(s) within that site, with this signature:
@@ -235,7 +235,7 @@ class Accessor:
 
         Otherwise, the default implementation fills in ``self.pathToData`` as a template.
         ``pathToData`` (passed in :meth:`__init__`) can be a pathlib.Path that looks like a
-        Python format string, i.e. ``soundDB.paths.spl / "SRCID_{unit}{site}.txt"``.
+        Python format string, i.e. ``soundDENA.paths.spl / "SRCID_{unit}{site}.txt"``.
         It is formatted with keyword arguments for unit, site, and year,
         and joined onto the root data directory for the site.
         If the path contains a ``*`` character, it will be passed to ``glob``,

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# soundDB documentation build configuration file, created by
+# soundDENA documentation build configuration file, created by
 # sphinx-quickstart on Wed Sep 23 13:24:06 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -58,7 +58,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'soundDB'
+project = 'soundDENA'
 copyright = '2015, Gabe Joseph'
 author = 'Gabe Joseph'
 
@@ -223,7 +223,7 @@ html_sidebars = {
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'soundDBdoc'
+htmlhelp_basename = 'soundDENAdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -245,7 +245,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'soundDB.tex', 'soundDB Documentation',
+  (master_doc, 'soundDENA.tex', 'soundDENA Documentation',
    'Gabe Joseph', 'manual'),
 ]
 
@@ -275,7 +275,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'sounddb', 'soundDB Documentation',
+    (master_doc, 'sounddb', 'soundDENA Documentation',
      [author], 1)
 ]
 
@@ -289,8 +289,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'soundDB', 'soundDB Documentation',
-   author, 'soundDB', 'One line description of project.',
+  (master_doc, 'soundDENA', 'soundDENA Documentation',
+   author, 'soundDENA', 'One line description of project.',
    'Miscellaneous'),
 ]
 

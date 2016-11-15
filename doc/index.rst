@@ -1,4 +1,4 @@
-.. soundDB documentation master file, created by
+.. soundDENA documentation master file, created by
    sphinx-quickstart on Wed Sep 23 13:24:06 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -14,10 +14,10 @@
 
 .. _intro:
 
-soundDB
+soundDENA
 =======
 
-soundDB is a Python library for easily and precisely accessing various sorts of natural sounds data in bulk. It allows you to treat the NSNSD hierarchical file structure almost as though it were a queryable database.
+soundDENA is a Python library for easily and precisely accessing various sorts of natural sounds data in bulk. It allows you to treat the NSNSD hierarchical file structure almost as though it were a queryable database.
 
 SoundDB:
 
@@ -27,14 +27,14 @@ SoundDB:
     * Plays nicely with the Python scientific computing ecosystem
     * Handles missing data without making a fuss
 
-A taste of soundDB:
+A taste of soundDENA:
 
 .. ipython:: python
 
-    import soundDB
+    import soundDENA
     query = 'unit == "DENA" and type == "Grid" and not winter_site'
-    denaSummerGrid = soundDB.metadata.query(query)
-    srcids = soundDB.srcid.all(denaSummerGrid)
+    denaSummerGrid = soundDENA.metadata.query(query)
+    srcids = soundDENA.srcid.all(denaSummerGrid)
     srcids
     # Total length of noise events, by vehicle type:
     srcids.groupby("srcID")["len"].sum()
