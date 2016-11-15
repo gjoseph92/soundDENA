@@ -36,6 +36,7 @@
 set -e
 
 DOCDIR="doc"
+DISTDIR="dist"
 
 
 SCRIPTS=$(basename $(dirname $0))
@@ -49,11 +50,11 @@ if [ ! -e $DOCDIR ]; then
 	exit
 fi
 
-# like rm -rf *, but skip self
+# like rm -rf *, but skip self, docs, and wheel distribution dir
 echo "Cleaning working directory"
 for f in *
 do
-	if [ "$f" != "$SCRIPTS" -a "$f" != "$DOCDIR" ]; then
+	if [ "$f" != "$SCRIPTS" -a "$f" != "$DOCDIR" -a "$f" != "$DISTDIR" ]; then
 		rm -rf $f
 	fi
 done
@@ -62,6 +63,7 @@ echo "Copying $DOCDIR/_build/html/* to working directory"
 cp -r $DOCDIR/_build/html/* .
 git add --all .
 git reset HEAD $DOCDIR
+git reset HEAD $DISTDIR
 git reset HEAD $SCRIPTS
 git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
 echo "Done!"
