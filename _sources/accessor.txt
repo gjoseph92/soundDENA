@@ -1,4 +1,4 @@
-.. currentmodule:: soundDB
+.. currentmodule:: soundDENA
 
 .. _accessor:
 
@@ -10,7 +10,7 @@ For every type of file, where it's found in the NSNSD file hierarchy and how it'
 
 Example: creating an accessor for RAVEN data::
 
-    import soundDB
+    import soundDENA
     import pandas as pd
 
     def parseRAVENfile(pathToFile):
@@ -20,7 +20,7 @@ Example: creating an accessor for RAVEN data::
 
     pathToRAVENfileWithinSite = "02 ANALYSIS/RAVEN/table_{unit}{site}.txt"
 
-    ravenAccessor = soundDB.Accessor(parseRAVENfile,
+    ravenAccessor = soundDENA.Accessor(parseRAVENfile,
                                      pathToRAVENfileWithinSite)
 
     ## You can now do things like:
@@ -28,7 +28,7 @@ Example: creating an accessor for RAVEN data::
     ravenAccessor.all(["DENAFANG2013", "DENAWEBU2009"])
     ## Returns a DataFrame of RAVEN data for both the sites
 
-    for data, unit, site, year in ravenAccessor(soundDB.metadata.query("elevation < 500")):
+    for data, unit, site, year in ravenAccessor(soundDENA.metadata.query("elevation < 500")):
         unique = sum(data["Species "+i].nunique() for i in "1234")
         print("{} in {}: {} unique species".format(site, year, unique))
 

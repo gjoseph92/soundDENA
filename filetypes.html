@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Filetype-Specific Accessors &mdash; soundDB 0.0.1 documentation</title>
+    <title>Filetype-Specific Accessors &mdash; soundDENA 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="soundDB 0.0.1 documentation" href="index.html" />
+    <link rel="top" title="soundDENA 0.0.1 documentation" href="index.html" />
     <link rel="next" title="Path &amp; Directory Structure" href="paths.html" />
     <link rel="prev" title="The Accessor Class" href="accessor.html" />
    
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="accessor.html" title="The Accessor Class"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">soundDB 0.0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">soundDENA 0.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,14 +59,14 @@
             
   <div class="section" id="filetype-specific-accessors">
 <span id="filetypes"></span><h1>Filetype-Specific Accessors<a class="headerlink" href="#filetype-specific-accessors" title="Permalink to this headline">¶</a></h1>
-<p>soundDB includes Accessor instances for the following filetypes. (They&#8217;re available as <code class="docutils literal"><span class="pre">soundDB.&lt;filetype&gt;</span></code>, i.e. <code class="docutils literal"><span class="pre">soundDB.nvspl(sites)</span></code>, <code class="docutils literal"><span class="pre">soundDB.srcid.all(sites)</span></code>, etc.) This page lists the documentation for each of their <a class="reference internal" href="accessor.html#soundDB.Accessor.parse" title="soundDB.Accessor.parse"><code class="xref py py-meth docutils literal"><span class="pre">parse()</span></code></a> methods&#8212;how they behave on data from a single site. This behavior is then applied to multiple sites using <a class="reference internal" href="accessor.html#soundDB.Accessor.__call__" title="soundDB.Accessor.__call__"><code class="xref py py-meth docutils literal"><span class="pre">__call__()</span></code></a>, or concatenated using <a class="reference internal" href="accessor.html#soundDB.Accessor.all" title="soundDB.Accessor.all"><code class="xref py py-meth docutils literal"><span class="pre">all()</span></code></a>.</p>
+<p>soundDENA includes Accessor instances for the following filetypes. (They&#8217;re available as <code class="docutils literal"><span class="pre">soundDENA.&lt;filetype&gt;</span></code>, i.e. <code class="docutils literal"><span class="pre">soundDENA.nvspl(sites)</span></code>, <code class="docutils literal"><span class="pre">soundDENA.srcid.all(sites)</span></code>, etc.) This page lists the documentation for each of their <a class="reference internal" href="accessor.html#soundDENA.Accessor.parse" title="soundDENA.Accessor.parse"><code class="xref py py-meth docutils literal"><span class="pre">parse()</span></code></a> methods&#8212;how they behave on data from a single site. This behavior is then applied to multiple sites using <a class="reference internal" href="accessor.html#soundDENA.Accessor.__call__" title="soundDENA.Accessor.__call__"><code class="xref py py-meth docutils literal"><span class="pre">__call__()</span></code></a>, or concatenated using <a class="reference internal" href="accessor.html#soundDENA.Accessor.all" title="soundDENA.Accessor.all"><code class="xref py py-meth docutils literal"><span class="pre">all()</span></code></a>.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">Remember, you will be using these wrapped up in instances of <a class="reference internal" href="accessor.html#soundDB.Accessor" title="soundDB.Accessor"><code class="xref py py-class docutils literal"><span class="pre">soundDB.Accessor</span></code></a>. Though this page implies that <code class="docutils literal"><span class="pre">soundDB.nvspl</span></code> returns a DataFrame, <code class="docutils literal"><span class="pre">soundDB.nvspl(sites)</span></code> is actually an iterator, which yields such a DataFrame for every site.</p>
+<p class="last">Remember, you will be using these wrapped up in instances of <a class="reference internal" href="accessor.html#soundDENA.Accessor" title="soundDENA.Accessor"><code class="xref py py-class docutils literal"><span class="pre">soundDENA.Accessor</span></code></a>. Though this page implies that <code class="docutils literal"><span class="pre">soundDENA.nvspl</span></code> returns a DataFrame, <code class="docutils literal"><span class="pre">soundDENA.nvspl(sites)</span></code> is actually an iterator, which yields such a DataFrame for every site.</p>
 </div>
 <dl class="data">
-<dt id="soundDB.nvspl">
-<code class="descclassname">soundDB.</code><code class="descname">nvspl</code><a class="headerlink" href="#soundDB.nvspl" title="Permalink to this definition">¶</a></dt>
+<dt id="soundDENA.nvspl">
+<code class="descclassname">soundDENA.</code><code class="descname">nvspl</code><a class="headerlink" href="#soundDENA.nvspl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read all the NVSPL files in a directory into a single pandas DataFrame, indexed by date.</p>
 <p>To speed up the process during testing, set the interval: only every ith file will be read.
 You can also specify only the columns you need, reducing import time and memory footprint.</p>
@@ -102,8 +102,8 @@ Indexed by date, with frequency column names as decimals instead of &#8220;12p5h
 </dd></dl>
 
 <dl class="data">
-<dt id="soundDB.srcid">
-<code class="descclassname">soundDB.</code><code class="descname">srcid</code><a class="headerlink" href="#soundDB.srcid" title="Permalink to this definition">¶</a></dt>
+<dt id="soundDENA.srcid">
+<code class="descclassname">soundDENA.</code><code class="descname">srcid</code><a class="headerlink" href="#soundDENA.srcid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a SPLAT SRCID file into a pandas DataFrame.</p>
 <p>The <code class="docutils literal"><span class="pre">nvsplDate</span></code>, <code class="docutils literal"><span class="pre">hr</span></code>, and <code class="docutils literal"><span class="pre">secs</span></code> columns are combined into a single DatetimeIndex for the DataFrame and dropped.
 The <code class="docutils literal"><span class="pre">len</span></code> column (length of the noise event) is converted to a pandas Timedelta.</p>
@@ -118,8 +118,8 @@ The <code class="docutils literal"><span class="pre">len</span></code> column (l
 </dd></dl>
 
 <dl class="data">
-<dt id="soundDB.loudevents">
-<code class="descclassname">soundDB.</code><code class="descname">loudevents</code><a class="headerlink" href="#soundDB.loudevents" title="Permalink to this definition">¶</a></dt>
+<dt id="soundDENA.loudevents">
+<code class="descclassname">soundDENA.</code><code class="descname">loudevents</code><a class="headerlink" href="#soundDENA.loudevents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a LOUNDEVENTS file into a pandas Panel.</p>
 <ul class="simple">
 <li>The items axis (axis 0) is [&#8220;above&#8221;, &#8220;all&#8221;, &#8220;percent&#8221;]. So you&#8217;d use <code class="docutils literal"><span class="pre">events[&quot;above&quot;]</span></code> to get a
@@ -138,8 +138,8 @@ sub-DataFrame of events that exceeded $L_{nat}$, where rows are indexed by date,
 </dd></dl>
 
 <dl class="data">
-<dt id="soundDB.dailypa">
-<code class="descclassname">soundDB.</code><code class="descname">dailypa</code><a class="headerlink" href="#soundDB.dailypa" title="Permalink to this definition">¶</a></dt>
+<dt id="soundDENA.dailypa">
+<code class="descclassname">soundDENA.</code><code class="descname">dailypa</code><a class="headerlink" href="#soundDENA.dailypa" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a DAILYPA (percent time audible) file into a MultiIndexed pandas DataFrame.</p>
 <p>The result will be indexed on two levels: <cite>date</cite> and <cite>srcid</cite>.
 This allows for interesting sub-indexing, such as:</p>
@@ -169,8 +169,8 @@ This allows for interesting sub-indexing, such as:</p>
 </dd></dl>
 
 <dl class="data">
-<dt id="soundDB.metrics">
-<code class="descclassname">soundDB.</code><code class="descname">metrics</code><a class="headerlink" href="#soundDB.metrics" title="Permalink to this definition">¶</a></dt>
+<dt id="soundDENA.metrics">
+<code class="descclassname">soundDENA.</code><code class="descname">metrics</code><a class="headerlink" href="#soundDENA.metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read all tables from a metrics file.</p>
 <p>Returns an object (a named tuple, really) with attributes for each metric in the file, as well as
 <code class="docutils literal"><span class="pre">metadata</span></code>, which is a dict of the colon-seperated key-value pairs in the file&#8217;s header.
@@ -306,7 +306,7 @@ Unhandled&#8212;raised if the file is missing</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">soundDB</a></h1>
+<h1 class="logo"><a href="index.html">soundDENA</a></h1>
 
 
 

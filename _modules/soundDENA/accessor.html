@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>soundDB.accessor &mdash; soundDB 0.0.1 documentation</title>
+    <title>soundDENA.accessor &mdash; soundDENA 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="soundDB 0.0.1 documentation" href="../../index.html" />
+    <link rel="top" title="soundDENA 0.0.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
    
   
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">soundDB 0.0.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">soundDENA 0.0.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -51,7 +51,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for soundDB.accessor</h1><div class="highlight"><pre>
+  <h1>Source code for soundDENA.accessor</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">paths</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
@@ -60,8 +60,8 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<div class="viewcode-block" id="Accessor"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor">[docs]</a><span class="k">class</span> <span class="nc">Accessor</span><span class="p">:</span>
-<div class="viewcode-block" id="Accessor.__init__"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parserFunc</span><span class="p">,</span> <span class="n">pathToData</span><span class="p">):</span>
+<div class="viewcode-block" id="Accessor"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor">[docs]</a><span class="k">class</span> <span class="nc">Accessor</span><span class="p">:</span>
+<div class="viewcode-block" id="Accessor.__init__"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parserFunc</span><span class="p">,</span> <span class="n">pathToData</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate an Accessor for a specific filetype by giving a function</span>
 <span class="sd">        to parse that kind of file, and where that file is located.</span>
@@ -88,8 +88,8 @@
 <span class="sd">        Examples for ``pathToData``:</span>
 
 <span class="sd">            * ``&quot;01 DATA/PHOTOS/CardinalPhotoComposite_{unit}{site}.jpg&quot;``</span>
-<span class="sd">            * ``soundDB.paths.spl / &quot;SRCID_{unit}{site}.txt&quot;``</span>
-<span class="sd">            * ``soundDB.paths.nvspl / &quot;NVSPL_{unit}{site}*.txt&quot;``</span>
+<span class="sd">            * ``soundDENA.paths.spl / &quot;SRCID_{unit}{site}.txt&quot;``</span>
+<span class="sd">            * ``soundDENA.paths.nvspl / &quot;NVSPL_{unit}{site}*.txt&quot;``</span>
 
 <span class="sd">        If **pathToData** is a function, it should take the details of a specific site</span>
 <span class="sd">        and return the path to the file(s) within that site, with this signature:</span>
@@ -117,7 +117,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">pathToData</span> <span class="o">=</span> <span class="n">pathToData</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">__doc__</span>
 </div>
-<div class="viewcode-block" id="Accessor.__call__"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Accessor.__call__"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterate site-by-site over a type of data.</span>
 
@@ -158,7 +158,7 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span> <span class="p">)</span>
                 <span class="k">continue</span>
 </div>
-<div class="viewcode-block" id="Accessor.all"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Accessor.all"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read data from all specified sites into a single DataFrame or dict.</span>
 
@@ -192,7 +192,7 @@
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">results</span>
 </div>
-<div class="viewcode-block" id="Accessor.paths"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.paths">[docs]</a>    <span class="k">def</span> <span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Accessor.paths"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor.paths">[docs]</a>    <span class="k">def</span> <span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterate site-by-site over the paths to this sort of data file.</span>
 
@@ -217,7 +217,7 @@
             <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
                 <span class="k">continue</span>
 </div>
-<div class="viewcode-block" id="Accessor.access"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.access">[docs]</a>    <span class="k">def</span> <span class="nf">access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Accessor.access"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor.access">[docs]</a>    <span class="k">def</span> <span class="nf">access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read data from one site.</span>
 
@@ -259,7 +259,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div>
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="Accessor.parse"><a class="viewcode-back" href="../../accessor.html#soundDB.Accessor.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Accessor.parse"><a class="viewcode-back" href="../../accessor.html#soundDENA.Accessor.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse data from disk located at filepath.</span>
 <span class="sd">        This method is overridden in each instance by passing a parse function</span>
@@ -289,7 +289,7 @@
 
 <span class="sd">        Otherwise, the default implementation fills in ``self.pathToData`` as a template.</span>
 <span class="sd">        ``pathToData`` (passed in :meth:`__init__`) can be a pathlib.Path that looks like a</span>
-<span class="sd">        Python format string, i.e. ``soundDB.paths.spl / &quot;SRCID_{unit}{site}.txt&quot;``.</span>
+<span class="sd">        Python format string, i.e. ``soundDENA.paths.spl / &quot;SRCID_{unit}{site}.txt&quot;``.</span>
 <span class="sd">        It is formatted with keyword arguments for unit, site, and year,</span>
 <span class="sd">        and joined onto the root data directory for the site.</span>
 <span class="sd">        If the path contains a ``*`` character, it will be passed to ``glob``,</span>
@@ -314,7 +314,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../index.html">soundDB</a></h1>
+<h1 class="logo"><a href="../../index.html">soundDENA</a></h1>
 
 
 

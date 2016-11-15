@@ -4,11 +4,11 @@
 Installation
 ============
 
-soundDB is hosted as a Python wheel here on GitHub, so it can be installed using the package manager ``pip``.
+soundDENA is hosted as a Python wheel here on GitHub, so it can be installed using the package manager ``pip``.
 
 .. important::
 
-	Currently, soundDB is **Denali-specific**. So unless your name is Davy-d H Betchkal, you have little reason to be following these instructions. If you want to try it on your own data, you'll need to clone the `GitHub repository <https://github.com/gjoseph92/soundDB>`_ and tinker with the constants in :ref:`soundDB.paths <paths>` on your own.
+	Currently, soundDENA is **Denali-specific**. So unless your name is Davy-d H Betchkal, you have little reason to be following these instructions. If you want to try it on your own data, you'll need to clone the `GitHub repository <https://github.com/gjoseph92/soundDENA>`_ and tinker with the constants in :ref:`soundDENA.paths <paths>` on your own.
 
 Dependencies:
 =============
@@ -27,9 +27,9 @@ Windows
 
 Open Command Prompt and enter this command::
 
-	pip install --upgrade --no-deps --index-url https://gjoseph92.github.io/soundDB/dist/ soundDB
+	pip install --upgrade --no-deps --index-url https://gjoseph92.github.io/soundDENA/dist/ soundDENA
 
-The ``--upgrade`` will upgrade soundDB to the latest version, even if it's already installed.
+The ``--upgrade`` will upgrade soundDENA to the latest version, even if it's already installed.
 
 ``--no-deps`` (no dependencies) is important on Windows, as otherwise pip might try to upgrade numpy and scipy at the same time, but those packages should only be upgraded by Anaconda.
 
@@ -38,4 +38,4 @@ Linux/Mac
 
 This command in a shell will work::
 
-	pip install --upgrade --index-url https://gjoseph92.github.io/soundDB/dist/ soundDB
+	pip install --upgrade --index-url https://gjoseph92.github.io/soundDENA/dist/ soundDENA

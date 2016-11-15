@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>soundDB.paths &mdash; soundDB 0.0.1 documentation</title>
+    <title>soundDENA.paths &mdash; soundDENA 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="soundDB 0.0.1 documentation" href="../../index.html" />
+    <link rel="top" title="soundDENA 0.0.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
    
   
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">soundDB 0.0.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">soundDENA 0.0.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -51,7 +51,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for soundDB.paths</h1><div class="highlight"><pre>
+  <h1>Source code for soundDENA.paths</h1><div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">pandas</span>
@@ -98,7 +98,7 @@
 <span class="n">_siteID_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^([\w\d]{4})([\w\d]{4})(\d{4})$&quot;</span><span class="p">)</span>
 <span class="n">_dataDir_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^(\d{4}) ([\w\d]{4})([\w\d]{4}) (.*)&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="splitSiteID"><a class="viewcode-back" href="../../paths.html#soundDB.paths.splitSiteID">[docs]</a><span class="k">def</span> <span class="nf">splitSiteID</span><span class="p">(</span><span class="n">siteID</span><span class="p">):</span>
+<div class="viewcode-block" id="splitSiteID"><a class="viewcode-back" href="../../paths.html#soundDENA.paths.splitSiteID">[docs]</a><span class="k">def</span> <span class="nf">splitSiteID</span><span class="p">(</span><span class="n">siteID</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a 3-tuple of unit, site, and year for a site ID string.</span>
 <span class="sd">    Site IDs are formatted as UNITSITEYEAR, i.e. DENAUPST2015</span>
@@ -108,7 +108,7 @@
         <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid site ID: &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">siteID</span><span class="p">))</span></div>
-<div class="viewcode-block" id="siteID"><a class="viewcode-back" href="../../paths.html#soundDB.paths.siteID">[docs]</a><span class="k">def</span> <span class="nf">siteID</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+<div class="viewcode-block" id="siteID"><a class="viewcode-back" href="../../paths.html#soundDENA.paths.siteID">[docs]</a><span class="k">def</span> <span class="nf">siteID</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Formats unit, site, and year into a site ID (UNITSITEYEAR, i.e. DENAUPST2015)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -116,7 +116,7 @@
         <span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">unit</span><span class="o">+</span><span class="n">site</span><span class="o">+</span><span class="n">year</span>
 </div>
-<div class="viewcode-block" id="splitDataDir"><a class="viewcode-back" href="../../paths.html#soundDB.paths.splitDataDir">[docs]</a><span class="k">def</span> <span class="nf">splitDataDir</span><span class="p">(</span><span class="n">dataDir</span><span class="p">):</span>
+<div class="viewcode-block" id="splitDataDir"><a class="viewcode-back" href="../../paths.html#soundDENA.paths.splitDataDir">[docs]</a><span class="k">def</span> <span class="nf">splitDataDir</span><span class="p">(</span><span class="n">dataDir</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a 4-tuple of unit, site, year, and title for a data directory (pathlib.Path, or string).</span>
 <span class="sd">    Data directory names are formatted as: YEAR UNITSITE &lt;title&gt;, i.e. 2014 GAARNWAL North Walker Lake</span>
@@ -128,7 +128,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid data dir name: &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataDir</span><span class="p">))</span></div>
-<div class="viewcode-block" id="dataDir"><a class="viewcode-back" href="../../paths.html#soundDB.paths.dataDir">[docs]</a><span class="k">def</span> <span class="nf">dataDir</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="dataDir"><a class="viewcode-back" href="../../paths.html#soundDENA.paths.dataDir">[docs]</a><span class="k">def</span> <span class="nf">dataDir</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Formats unit, site, year, and title into the name of a data directory (i.e. 2014 DENABACK Backside Lake)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -158,7 +158,7 @@
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;Permission denied to access data directory &quot;{}&quot;. Most data-accessing functions will raise exceptions.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rawdata</span><span class="p">)))</span>
 <span class="n">_buildDataDirLookup</span><span class="p">()</span>
 
-<div class="viewcode-block" id="getDataDirPath"><a class="viewcode-back" href="../../paths.html#soundDB.paths.getDataDirPath">[docs]</a><span class="k">def</span> <span class="nf">getDataDirPath</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="getDataDirPath"><a class="viewcode-back" href="../../paths.html#soundDENA.paths.getDataDirPath">[docs]</a><span class="k">def</span> <span class="nf">getDataDirPath</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a site ID string, or unit, site, and year, returns a pathlib.Path to</span>
 <span class="sd">    that site&#39;s data directory.</span>
@@ -179,7 +179,7 @@
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;No data directory found for {}{} in {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">split</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="dataDirs"><a class="viewcode-back" href="../../paths.html#soundDB.paths.dataDirs">[docs]</a><span class="k">def</span> <span class="nf">dataDirs</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="dataDirs"><a class="viewcode-back" href="../../paths.html#soundDENA.paths.dataDirs">[docs]</a><span class="k">def</span> <span class="nf">dataDirs</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generator that returns paths to raw data directories corresponding to the given sites.</span>
 
@@ -223,7 +223,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../index.html">soundDB</a></h1>
+<h1 class="logo"><a href="../../index.html">soundDENA</a></h1>
 
 
 

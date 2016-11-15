@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>What you’ll use 90% of the time &mdash; soundDB 0.0.1 documentation</title>
+    <title>What you’ll use 90% of the time &mdash; soundDENA 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="soundDB 0.0.1 documentation" href="index.html" />
+    <link rel="top" title="soundDENA 0.0.1 documentation" href="index.html" />
     <link rel="next" title="The Accessor Class" href="accessor.html" />
-    <link rel="prev" title="soundDB" href="index.html" />
+    <link rel="prev" title="soundDENA" href="index.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -46,9 +46,9 @@
           <a href="accessor.html" title="The Accessor Class"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="soundDB"
+          <a href="index.html" title="soundDENA"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">soundDB 0.0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">soundDENA 0.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,16 +61,16 @@
 <span id="overview"></span><h1>What you&#8217;ll use 90% of the time<a class="headerlink" href="#what-you-ll-use-90-of-the-time" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="reading-data">
 <h2>Reading Data<a class="headerlink" href="#reading-data" title="Permalink to this headline">¶</a></h2>
-<p>The soundDB module has an attribute for each type of file it can access&#8212;for example, <code class="docutils literal"><span class="pre">soundDB.nvspl</span></code>, <code class="docutils literal"><span class="pre">soundDB.srcid</span></code>, and <code class="docutils literal"><span class="pre">soundDB.metrics</span></code>. These are all instances of the class <a class="reference internal" href="accessor.html#soundDB.Accessor" title="soundDB.Accessor"><code class="xref py py-class docutils literal"><span class="pre">Accessor</span></code></a>. (For the full list of supported files, see <a class="reference internal" href="filetypes.html#filetypes"><span>Filetype Accessors</span></a>.) There are several ways to use the Accessor class, but the most common are:</p>
+<p>The soundDENA module has an attribute for each type of file it can access&#8212;for example, <code class="docutils literal"><span class="pre">soundDENA.nvspl</span></code>, <code class="docutils literal"><span class="pre">soundDENA.srcid</span></code>, and <code class="docutils literal"><span class="pre">soundDENA.metrics</span></code>. These are all instances of the class <a class="reference internal" href="accessor.html#soundDENA.Accessor" title="soundDENA.Accessor"><code class="xref py py-class docutils literal"><span class="pre">Accessor</span></code></a>. (For the full list of supported files, see <a class="reference internal" href="filetypes.html#filetypes"><span>Filetype Accessors</span></a>.) There are several ways to use the Accessor class, but the most common are:</p>
 <dl class="function">
 <dt>
-<code class="descname">soundDB.&lt;filetype&gt;(sites)</code></dt>
-<dd><p>Returns an iterator over the data for each site. The iterator yields a tuple of <code class="docutils literal"><span class="pre">(data,</span> <span class="pre">unit,</span> <span class="pre">site,</span> <span class="pre">year)</span></code>, where <code class="docutils literal"><span class="pre">data</span></code> is usually a pandas DataFrame or Panel. <a class="reference internal" href="accessor.html#soundDB.Accessor.__call__" title="soundDB.Accessor.__call__"><code class="xref py py-meth docutils literal"><span class="pre">See</span> <span class="pre">full</span> <span class="pre">documentation</span></code></a>.</p>
+<code class="descname">soundDENA.&lt;filetype&gt;(sites)</code></dt>
+<dd><p>Returns an iterator over the data for each site. The iterator yields a tuple of <code class="docutils literal"><span class="pre">(data,</span> <span class="pre">unit,</span> <span class="pre">site,</span> <span class="pre">year)</span></code>, where <code class="docutils literal"><span class="pre">data</span></code> is usually a pandas DataFrame or Panel. <a class="reference internal" href="accessor.html#soundDENA.Accessor.__call__" title="soundDENA.Accessor.__call__"><code class="xref py py-meth docutils literal"><span class="pre">See</span> <span class="pre">full</span> <span class="pre">documentation</span></code></a>.</p>
 <div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1]: </span><span class="n">props</span> <span class="o">=</span> <span class="n">jets</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="gp">In [2]: </span><span class="n">denaliSites</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;DENAKAHP2010&quot;</span><span class="p">,</span> <span class="s">&quot;DENAWEBU2009&quot;</span><span class="p">,</span> <span class="s">&quot;DENAUKAH2011&quot;</span><span class="p">]</span>
 
-<span class="gp">In [3]: </span><span class="k">for</span> <span class="n">srcid</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">soundDB</span><span class="o">.</span><span class="n">srcid</span><span class="p">(</span><span class="n">denaliSites</span><span class="p">):</span>
+<span class="gp">In [3]: </span><span class="k">for</span> <span class="n">srcid</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">soundDENA</span><span class="o">.</span><span class="n">srcid</span><span class="p">(</span><span class="n">denaliSites</span><span class="p">):</span>
 <span class="gp">   ...: </span>    <span class="n">jets</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span> <span class="n">srcid</span><span class="p">[</span> <span class="n">srcid</span><span class="o">.</span><span class="n">srcID</span> <span class="o">==</span> <span class="mf">1.1</span> <span class="p">]</span> <span class="p">)</span>
 <span class="gp">   ...: </span>    <span class="n">props</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span> <span class="n">srcid</span><span class="p">[</span> <span class="n">srcid</span><span class="o">.</span><span class="n">srcID</span> <span class="o">==</span> <span class="mf">1.2</span> <span class="p">]</span> <span class="p">)</span>
 <span class="gp">   ...: </span>
@@ -84,11 +84,11 @@
 
 <dl class="function">
 <dt>
-<code class="descname">soundDB.&lt;filetype&gt;.all(sites)</code></dt>
-<dd><p>Returns data from all the sites concatenated into a single object, typically a pandas DataFrame or Panel. <a class="reference internal" href="accessor.html#soundDB.Accessor.all" title="soundDB.Accessor.all"><code class="xref py py-meth docutils literal"><span class="pre">See</span> <span class="pre">full</span> <span class="pre">documentation</span></code></a>.</p>
+<code class="descname">soundDENA.&lt;filetype&gt;.all(sites)</code></dt>
+<dd><p>Returns data from all the sites concatenated into a single object, typically a pandas DataFrame or Panel. <a class="reference internal" href="accessor.html#soundDENA.Accessor.all" title="soundDENA.Accessor.all"><code class="xref py py-meth docutils literal"><span class="pre">See</span> <span class="pre">full</span> <span class="pre">documentation</span></code></a>.</p>
 <div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [5]: </span><span class="n">denaliSites</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;DENAKAHP2010&quot;</span><span class="p">,</span> <span class="s">&quot;DENAWEBU2009&quot;</span><span class="p">,</span> <span class="s">&quot;DENAUKAH2011&quot;</span><span class="p">]</span>
 
-<span class="gp">In [6]: </span><span class="n">srcids</span> <span class="o">=</span> <span class="n">soundDB</span><span class="o">.</span><span class="n">srcid</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">denaliSites</span><span class="p">)</span>
+<span class="gp">In [6]: </span><span class="n">srcids</span> <span class="o">=</span> <span class="n">soundDENA</span><span class="o">.</span><span class="n">srcid</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">denaliSites</span><span class="p">)</span>
 
 <span class="gp">In [7]: </span><span class="n">jets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span> <span class="n">srcids</span><span class="p">[</span> <span class="n">srcids</span><span class="o">.</span><span class="n">srcID</span> <span class="o">==</span> <span class="mf">1.1</span> <span class="p">]</span> <span class="p">)</span>
 
@@ -103,11 +103,11 @@
 
 <dl class="function">
 <dt>
-<code class="descname">soundDB.&lt;filetype&gt;.paths(sites)</code></dt>
-<dd><p>Returns an iterator over the paths to the data files for each site. <a class="reference internal" href="accessor.html#soundDB.Accessor.paths" title="soundDB.Accessor.paths"><code class="xref py py-meth docutils literal"><span class="pre">See</span> <span class="pre">full</span> <span class="pre">documentation</span></code></a>.</p>
+<code class="descname">soundDENA.&lt;filetype&gt;.paths(sites)</code></dt>
+<dd><p>Returns an iterator over the paths to the data files for each site. <a class="reference internal" href="accessor.html#soundDENA.Accessor.paths" title="soundDENA.Accessor.paths"><code class="xref py py-meth docutils literal"><span class="pre">See</span> <span class="pre">full</span> <span class="pre">documentation</span></code></a>.</p>
 <div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [10]: </span><span class="n">denaliSites</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;DENAKAHP2010&quot;</span><span class="p">,</span> <span class="s">&quot;DENAWEBU2009&quot;</span><span class="p">,</span> <span class="s">&quot;DENAUKAH2011&quot;</span><span class="p">]</span>
 
-<span class="gp">In [11]: </span><span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">soundDB</span><span class="o">.</span><span class="n">srcid</span><span class="o">.</span><span class="n">paths</span><span class="p">(</span><span class="n">denaliSites</span><span class="p">):</span>
+<span class="gp">In [11]: </span><span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">soundDENA</span><span class="o">.</span><span class="n">srcid</span><span class="o">.</span><span class="n">paths</span><span class="p">(</span><span class="n">denaliSites</span><span class="p">):</span>
 <span class="gp">   ....: </span>    <span class="k">print</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 <span class="gp">   ....: </span>
 <span class="go">KAHP 2010 E:\AKRO Soundscape Data\2010 DENAKAHP Kahiltna Pass\02 ANALYSIS\SPL Analysis\SRCID_DENAKAHP.txt</span>
@@ -117,7 +117,7 @@
 </div>
 </dd></dl>
 
-<p>In all cases, the parameter <strong>sites</strong> is an iterable of <span class="xref std std-ref">siteID</span>s. It could be as simple as <code class="docutils literal"><span class="pre">[&quot;DENAFANG2013&quot;,</span> <span class="pre">&quot;DENACARB2013&quot;,</span> <span class="pre">&quot;DENAPAIN2014&quot;]</span></code>, but it can also be a pandas DataFrame or Series whose <em>index</em> is the <span class="xref std std-ref">siteID</span>s you want. So most commonly, you&#8217;ll use a subselection from the <code class="xref py py-attr docutils literal"><span class="pre">metadata</span></code> DataFrame, like <code class="docutils literal"><span class="pre">soundDB.metadata.query(&quot;unit</span> <span class="pre">==</span> <span class="pre">'DENA'</span> <span class="pre">and</span> <span class="pre">type</span> <span class="pre">==</span> <span class="pre">'grid'&quot;)</span></code>.</p>
+<p>In all cases, the parameter <strong>sites</strong> is an iterable of <span class="xref std std-ref">siteID</span>s. It could be as simple as <code class="docutils literal"><span class="pre">[&quot;DENAFANG2013&quot;,</span> <span class="pre">&quot;DENACARB2013&quot;,</span> <span class="pre">&quot;DENAPAIN2014&quot;]</span></code>, but it can also be a pandas DataFrame or Series whose <em>index</em> is the <span class="xref std std-ref">siteID</span>s you want. So most commonly, you&#8217;ll use a subselection from the <code class="xref py py-attr docutils literal"><span class="pre">metadata</span></code> DataFrame, like <code class="docutils literal"><span class="pre">soundDENA.metadata.query(&quot;unit</span> <span class="pre">==</span> <span class="pre">'DENA'</span> <span class="pre">and</span> <span class="pre">type</span> <span class="pre">==</span> <span class="pre">'grid'&quot;)</span></code>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Why not always use <code class="docutils literal"><span class="pre">.all()</span></code>? Though it&#8217;s sometimes less convenient, iterating site-by-site greatly reduces memory useage, as you only need to keep around data for a single site at a time.</p>
@@ -126,10 +126,10 @@
 </div>
 <div class="section" id="selecting-sites">
 <h2>Selecting Sites<a class="headerlink" href="#selecting-sites" title="Permalink to this headline">¶</a></h2>
-<p>Using a list of <span class="xref std std-ref">siteID</span> strings gets tedious&#8212;usually, you want data from sites that meet some criteria, like season, elevation, year, or park. This sort of metadata is found in the <a class="reference internal" href="paths.html#soundDB.paths.metadata" title="soundDB.paths.metadata"><code class="xref py py-attr docutils literal"><span class="pre">Complete</span> <span class="pre">Metadata</span></code></a> and <a class="reference internal" href="paths.html#soundDB.paths.derivedData" title="soundDB.paths.derivedData"><code class="xref py py-attr docutils literal"><span class="pre">Derived</span> <span class="pre">Data</span></code></a> workbooks, so when you import soundDB, it loads both into a single pandas DataFrame, accessible as <code class="xref py py-attr docutils literal"><span class="pre">soundDB.metadata</span></code>. You can then sub-select sites using criteria such as <code class="docutils literal"><span class="pre">unit</span></code>, <code class="docutils literal"><span class="pre">winter_site</span></code>, <code class="docutils literal"><span class="pre">elevation</span></code>, etc. <code class="xref py py-attr docutils literal"><span class="pre">soundDB.metadata</span></code>&#8216;s row indicies are <span class="xref std std-ref">siteID</span>s, so you can use it as a site specifier for an <a class="reference internal" href="accessor.html#soundDB.Accessor" title="soundDB.Accessor"><code class="xref py py-class docutils literal"><span class="pre">Accessor</span></code></a>.</p>
-<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [12]: </span><span class="kn">import</span> <span class="nn">soundDB</span>
+<p>Using a list of <span class="xref std std-ref">siteID</span> strings gets tedious&#8212;usually, you want data from sites that meet some criteria, like season, elevation, year, or park. This sort of metadata is found in the <a class="reference internal" href="paths.html#soundDENA.paths.metadata" title="soundDENA.paths.metadata"><code class="xref py py-attr docutils literal"><span class="pre">Complete</span> <span class="pre">Metadata</span></code></a> and <a class="reference internal" href="paths.html#soundDENA.paths.derivedData" title="soundDENA.paths.derivedData"><code class="xref py py-attr docutils literal"><span class="pre">Derived</span> <span class="pre">Data</span></code></a> workbooks, so when you import soundDENA, it loads both into a single pandas DataFrame, accessible as <code class="xref py py-attr docutils literal"><span class="pre">soundDENA.metadata</span></code>. You can then sub-select sites using criteria such as <code class="docutils literal"><span class="pre">unit</span></code>, <code class="docutils literal"><span class="pre">winter_site</span></code>, <code class="docutils literal"><span class="pre">elevation</span></code>, etc. <code class="xref py py-attr docutils literal"><span class="pre">soundDENA.metadata</span></code>&#8216;s row indicies are <span class="xref std std-ref">siteID</span>s, so you can use it as a site specifier for an <a class="reference internal" href="accessor.html#soundDENA.Accessor" title="soundDENA.Accessor"><code class="xref py py-class docutils literal"><span class="pre">Accessor</span></code></a>.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [12]: </span><span class="kn">import</span> <span class="nn">soundDENA</span>
 
-<span class="gp">In [13]: </span><span class="n">soundDB</span><span class="o">.</span><span class="n">metadata</span>
+<span class="gp">In [13]: </span><span class="n">soundDENA</span><span class="o">.</span><span class="n">metadata</span>
 <span class="gh">Out[13]: </span><span class="go"></span>
 <span class="go">               unit      ...      atmospressure</span>
 <span class="go">DENA7MIL2001   DENA      ...                NaN</span>
@@ -144,7 +144,7 @@
 
 <span class="go">[161 rows x 159 columns]</span>
 
-<span class="gp">In [14]: </span><span class="n">soundDB</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">columns</span>
+<span class="gp">In [14]: </span><span class="n">soundDENA</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">columns</span>
 <span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Out[14]: </span>
 <span class="go">Index([&#39;unit&#39;, &#39;title&#39;, &#39;site&#39;, &#39;year&#39;, &#39;winter_site&#39;, &#39;BCMP_zone&#39;, &#39;lat&#39;,</span>
 <span class="go">       &#39;long&#39;, &#39;elevation&#39;, &#39;noise floor&#39;, </span>
@@ -154,7 +154,7 @@
 <span class="go">       &#39;temp30yrannual&#39;, &#39;temp30yrsummer&#39;, &#39;temp30yrwinter&#39;, &#39;atmospressure&#39;],</span>
 <span class="go">      dtype=&#39;object&#39;, length=159)</span>
 
-<span class="gp">In [15]: </span><span class="n">soundDB</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">index</span>
+<span class="gp">In [15]: </span><span class="n">soundDENA</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">index</span>
 <span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Out[15]: </span>
 <span class="go">Index([&#39;DENA7MIL2001&#39;, &#39;DENADUNK2001&#39;, &#39;DENASAVR2001&#39;, &#39;DENATEKP2001&#39;,</span>
 <span class="go">       &#39;DENATOKL2001&#39;, &#39;DENATOKO2001&#39;, &#39;DENAWOND2001&#39;, &#39;DENABASE2002&#39;,</span>
@@ -169,12 +169,12 @@
 </div>
 <div class="section" id="putting-it-together">
 <h2>Putting It Together<a class="headerlink" href="#putting-it-together" title="Permalink to this headline">¶</a></h2>
-<p>By using a subselection of <code class="xref py py-attr docutils literal"><span class="pre">soundDB.metadata</span></code> as the site specifier for an <a class="reference internal" href="accessor.html#soundDB.Accessor" title="soundDB.Accessor"><code class="xref py py-class docutils literal"><span class="pre">Accessor</span></code></a>, you can read the type of data you want from just certain sites that meet a criterion:</p>
+<p>By using a subselection of <code class="xref py py-attr docutils literal"><span class="pre">soundDENA.metadata</span></code> as the site specifier for an <a class="reference internal" href="accessor.html#soundDENA.Accessor" title="soundDENA.Accessor"><code class="xref py py-class docutils literal"><span class="pre">Accessor</span></code></a>, you can read the type of data you want from just certain sites that meet a criterion:</p>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p class="last">More explanation</p>
 </div>
-<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [16]: </span><span class="n">highDena</span> <span class="o">=</span> <span class="n">soundDB</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s">&quot;unit == &#39;DENA&#39; and elevation &gt; 2000 and not winter_site&quot;</span><span class="p">)</span>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [16]: </span><span class="n">highDena</span> <span class="o">=</span> <span class="n">soundDENA</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s">&quot;unit == &#39;DENA&#39; and elevation &gt; 2000 and not winter_site&quot;</span><span class="p">)</span>
 
 <span class="gp">In [17]: </span><span class="n">highDena</span>
 <span class="gh">Out[17]: </span><span class="go"></span>
@@ -191,7 +191,7 @@
 
 <span class="go">[10 rows x 159 columns]</span>
 
-<span class="gp">In [18]: </span><span class="n">soundDB</span><span class="o">.</span><span class="n">srcid</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">highDena</span><span class="p">)</span>
+<span class="gp">In [18]: </span><span class="n">soundDENA</span><span class="o">.</span><span class="n">srcid</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">highDena</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         Out[18]: </span>
 <span class="go">                                  Hz_L    ...       userName</span>
 <span class="go">siteID                                    ...               </span>
@@ -217,7 +217,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">soundDB</a></h1>
+<h1 class="logo"><a href="index.html">soundDENA</a></h1>
 
 
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Metadata &mdash; soundDB 0.0.1 documentation</title>
+    <title>Metadata &mdash; soundDENA 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="soundDB 0.0.1 documentation" href="index.html" />
+    <link rel="top" title="soundDENA 0.0.1 documentation" href="index.html" />
     <link rel="next" title="Installation" href="installation.html" />
     <link rel="prev" title="Path &amp; Directory Structure" href="paths.html" />
    
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="paths.html" title="Path &amp; Directory Structure"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">soundDB 0.0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">soundDENA 0.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,17 +59,17 @@
             
   <div class="section" id="metadata">
 <span id="id1"></span><h1>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h1>
-<p>The metadata about each site is typically the entry point for soundDB data access, as it&#8217;s queried to identify from which sites data should be read. The <a class="reference internal" href="paths.html#soundDB.paths.metadata" title="soundDB.paths.metadata"><code class="xref py py-attr docutils literal"><span class="pre">Complete</span> <span class="pre">Metadata</span></code></a> and <a class="reference internal" href="paths.html#soundDB.paths.derivedData" title="soundDB.paths.derivedData"><code class="xref py py-attr docutils literal"><span class="pre">Derived</span> <span class="pre">Data</span></code></a> Excel workbooks are joined into one DataFrame when soundDB is imported.</p>
+<p>The metadata about each site is typically the entry point for soundDENA data access, as it&#8217;s queried to identify from which sites data should be read. The <a class="reference internal" href="paths.html#soundDENA.paths.metadata" title="soundDENA.paths.metadata"><code class="xref py py-attr docutils literal"><span class="pre">Complete</span> <span class="pre">Metadata</span></code></a> and <a class="reference internal" href="paths.html#soundDENA.paths.derivedData" title="soundDENA.paths.derivedData"><code class="xref py py-attr docutils literal"><span class="pre">Derived</span> <span class="pre">Data</span></code></a> Excel workbooks are joined into one DataFrame when soundDENA is imported.</p>
 <dl class="data">
-<dt id="soundDB.soundDB.metadata">
-<code class="descclassname">soundDB.</code><code class="descname">metadata</code><a class="headerlink" href="#soundDB.soundDB.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>A DataFrame of the Complete Metadata and Derived Data workbooks. Indexed by <code class="docutils literal"><span class="pre">siteID</span></code>, with the union of all columns in both those workbooks. The column names and data are slightly modified for consistency; see <a class="reference internal" href="#soundDB.fullMetadata" title="soundDB.fullMetadata"><code class="xref py py-func docutils literal"><span class="pre">fullMetadata()</span></code></a> for specifics.</p>
+<dt id="soundDENA.soundDENA.metadata">
+<code class="descclassname">soundDENA.</code><code class="descname">metadata</code><a class="headerlink" href="#soundDENA.soundDENA.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>A DataFrame of the Complete Metadata and Derived Data workbooks. Indexed by <code class="docutils literal"><span class="pre">siteID</span></code>, with the union of all columns in both those workbooks. The column names and data are slightly modified for consistency; see <a class="reference internal" href="#soundDENA.fullMetadata" title="soundDENA.fullMetadata"><code class="xref py py-func docutils literal"><span class="pre">fullMetadata()</span></code></a> for specifics.</p>
 </dd></dl>
 
 <p>Though unlikely, if these workbooks ever change midway through a script or interactive session, you can reload them using:</p>
 <dl class="function">
-<dt id="soundDB.fullMetadata">
-<code class="descclassname">soundDB.</code><code class="descname">fullMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDB/metadata.html#fullMetadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDB.fullMetadata" title="Permalink to this definition">¶</a></dt>
+<dt id="soundDENA.fullMetadata">
+<code class="descclassname">soundDENA.</code><code class="descname">fullMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/soundDENA/metadata.html#fullMetadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#soundDENA.fullMetadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a DataFrame of metadata merged with derived data, with overlapping
 columns resolved. Some column names and values are changed for consistency.</p>
 <p>Transformations:</p>
@@ -105,7 +105,7 @@ Indexed by siteID (the 12-character code of UNITSITEYEAR, i.e. DENAUPST2015)</td
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">soundDB</a></h1>
+<h1 class="logo"><a href="index.html">soundDENA</a></h1>
 
 
 
