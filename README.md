@@ -5,9 +5,9 @@ You can read the full documentation at [gjoseph92.github.io/soundDENA/](https://
 
 soundDENA used to be known as soundDB. Though effective, this original version is specific to the Denali file structure. It's been replaced by a new [soundDB](https://github.com/nationalparkservice/soundDB/), which generalizes to all data collected by the [Natural Sounds & Night Skies Division](https://www.nps.gov/orgs/1050/index.htm).
 
-To install `soundDENA`:
+To install or upgrade `soundDENA` (without installing dependencies, because pip might clobber the numpy and pandas you installed with conda):
 
-`pip install --upgrade --no-deps --index-url https://gjoseph92.github.io/soundDENA/dist/ soundDENA`
+`pip install --upgrade --no-deps --extra-index-url https://gjoseph92.github.io/soundDENA/dist/ soundDENA`
 
 -------------------
 
